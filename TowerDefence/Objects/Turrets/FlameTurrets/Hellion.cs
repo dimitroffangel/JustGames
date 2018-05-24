@@ -35,6 +35,14 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             }
 
             this.Target = internal_Variables.EnemyPositions[minIndex];
+
+            // find the moving direction of the target
+
+        }
+
+        private void SetDestination()
+        {
+
         }
 
         public void Move()

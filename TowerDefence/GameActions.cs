@@ -56,6 +56,14 @@ namespace TowerDefence
                 this.Variables.IsGameOver = true;
                 this.Variables.EnemiesCurrentlyKilled = 0;
                 this.Variables.EnemiesCurrentlyMissed = 0;
+
+                // clear all data
+                this.Variables.EnemyPositions.Clear();
+                this.Variables.TurretsPosition.Clear();
+                this.Variables.ObstaclePositions.Clear();
+                this.Variables.Hellions.Clear();
+                this.Variables.BleedingEnemies.Clear();
+                this.Variables.Grenades.Clear();
             }
 
             else // remake the end game statements 

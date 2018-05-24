@@ -118,11 +118,11 @@ namespace TowerDefence
                     if (Variables.PlayerView == 'v')
                         newTurretY++;
                     else if (Variables.PlayerView == '^')
-                        newTurretY++;
+                        newTurretY--;
                     else if (Variables.PlayerView == '<')
                         newTurretX--;
                     else if (Variables.PlayerView == '>')
-                        newTurretX--;
+                        newTurretX++;
 
                     TurretPlacement placeOn = DeterminePlayerPosition();
 
@@ -152,6 +152,14 @@ namespace TowerDefence
                         turretSymbol = '#';
                         newTurretType = TurretType.LaserAnnihilator;
                         this.Variables.PocketMoney -= 500;
+                    }
+
+                    foreach (var obstaclePosition in Variables.ObstaclePositions)
+                    {
+                        if (obstaclePosition.Uniq_X == newTurretX && obstaclePosition.Uniq_Y == newTurretY)
+                        {
+                            return;
+                        }
                     }
 
                     Console.SetCursorPosition(newTurretX, newTurretY);
