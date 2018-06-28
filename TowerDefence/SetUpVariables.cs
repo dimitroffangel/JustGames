@@ -35,6 +35,7 @@ namespace TowerDefence
         public List<Enemy> EnemyPositions = new List<Enemy>();
         public List<Turret> TurretsPosition = new List<Turret>() ;
         public List<Position> ObstaclePositions = new List<Position>();
+        public List<FireTrapper> fireTrappers = new List<FireTrapper>();
         public List<Hellion> Hellions = new List<Hellion>();
         public List<BleedingEffect> BleedingEnemies = new List<BleedingEffect>();
         public List<Grenade> Grenades = new List<Grenade>();

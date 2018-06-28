@@ -50,6 +50,9 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             if (this.Target == null)
                 this.FindTarget();
 
+            int initialX = this.Uniq_X;
+            int initialY = this.Uniq_Y;
+
             Console.SetCursorPosition(this.Uniq_X, this.Uniq_Y);
             Console.Write(" ");
 
@@ -63,6 +66,8 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             else if (this.Uniq_Y < this.Target.Uniq_Y - 1)
                 this.Uniq_Y++;
 
+            // check if the new position does not overlap with a turret
+            // if it does TODOO
 
             Console.SetCursorPosition(this.Uniq_X, this.Uniq_Y);
             Console.Write("&");

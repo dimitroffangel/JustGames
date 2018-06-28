@@ -36,6 +36,7 @@ namespace TowerDefence
                     continue;
 
                 SpawnEnemies();
+                ExtendTraps();
                 MoveHellions();
                 TurretLogic();
                 InitiateBleedingsEffect();
@@ -70,6 +71,12 @@ namespace TowerDefence
             {
                 Console.WriteLine("The City was overrun");
             }
+        }
+
+        private void ExtendTraps()
+        {
+            for (int i = 0; i <this.Variables.fireTrappers.Count; i++)
+                this.Variables.fireTrappers[i].TryExtendingExplosion();
         }
 
         private void MoveHellions()

@@ -69,6 +69,33 @@ namespace TowerDefence
                         Console.SetCursorPosition(initialEnemyX, initialEnemyY);
                         Console.Write(" ");
                     }
+
+                    // review if the enemy is colliding with a fire trap
+                    for(int j = 0; j < this.Variables.fireTrappers.Count; j++)
+                    {
+                        var curTrap = this.Variables.fireTrappers[j];
+
+                        if(curTrap.Uniq_X == enemy.Uniq_X && curTrap.Uniq_Y == enemy.Uniq_Y)
+                        {
+                            // deal damage to the enemy
+                            // check if the enemy is alive 
+
+                            enemy.TakeDamage(curTrap.Damage);
+                            enemy.TryKilling();
+
+                           if(enemy.GetHealthStatus() <= 0)
+                            {
+                                i--; // ensure the for cycle is not dumbed
+                                this.Variables.EnemyPositions.Remove(enemy);
+                                this.Variables.EnemiesCurrentlyKilled++;
+                            }
+
+                            // remove the trap
+                            this.Variables.fireTrappers.Remove(curTrap);
+                            j--;
+
+                        }
+                    }
                 }
 
                 Console.SetCursorPosition(enemy.Uniq_X, enemy.Uniq_Y);
@@ -122,6 +149,5 @@ namespace TowerDefence
             // add the obstacle to the list of obstacles
             this.Variables.ObstaclePositions.Add(obstaclePosition);
         }
-
     }
 }

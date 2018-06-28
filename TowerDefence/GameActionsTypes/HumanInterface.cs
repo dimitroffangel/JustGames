@@ -136,7 +136,7 @@ namespace TowerDefence
                     else if (this.Variables.PocketMoney >= 340 && userInput.Key == ConsoleKey.O)
                     {
                         turretSymbol = '&';
-                        newTurretType = TurretType.FireBunker_Hellion;
+                        newTurretType = TurretType.FireBunker_Trap;
                         this.Variables.PocketMoney -= 340;
                     }
 
@@ -157,21 +157,31 @@ namespace TowerDefence
                     foreach (var obstaclePosition in Variables.ObstaclePositions)
                     {
                         if (obstaclePosition.Uniq_X == newTurretX && obstaclePosition.Uniq_Y == newTurretY)
-                        {
-                            return;
-                        }
+                           return;
                     }
 
                     Console.SetCursorPosition(newTurretX, newTurretY);
                     Console.Write(turretSymbol);
 
-                    if (userInput.Key == ConsoleKey.P)
+                    if (userInput.Key == ConsoleKey.P || userInput.Key == ConsoleKey.U)
                         this.Variables.TurretsPosition.Add(new Cannon(newTurretX, newTurretY, newTurretType, placeOn, ref this.Variables));
+                    // TODO ConsoleKey.I
                     else if (userInput.Key == ConsoleKey.O)
                     {
-                        var hellion = new Hellion(newTurretX, newTurretY, newTurretType, placeOn, ref this.Variables);
-                        this.Variables.TurretsPosition.Add(hellion);
-                        this.Variables.Hellions.Add(hellion);
+                        var trap = new FireTrapper(newTurretX, newTurretY, newTurretType, placeOn, ref this.Variables, false);
+
+                        // else no sense to care for the newly created gadget 
+                        for(int j = 0; j  < this.Variables.Battleground.Count; j++)
+                        {
+                            var curPosition = this.Variables.Battleground[j];
+                            if (curPosition.Uniq_X == newTurretX && curPosition.Uniq_Y == newTurretY)
+                            {
+                                this.Variables.fireTrappers.Add(trap);
+                                break;
+                            }
+                        }
+
+                        //  this.Variables.Hellions.Add(hellion);
                     }
                 }
             }
