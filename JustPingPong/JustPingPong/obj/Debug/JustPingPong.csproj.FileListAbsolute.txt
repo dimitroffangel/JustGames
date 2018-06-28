@@ -1,0 +1,13 @@
+F:\TelerikProgramming\Homework\JustGames\JustPingPong\JustPingPong\JustPingPong\bin\Debug\JustPingPong.exe.config
+F:\TelerikProgramming\Homework\JustGames\JustPingPong\JustPingPong\JustPingPong\bin\Debug\JustPingPong.exe
+F:\TelerikProgramming\Homework\JustGames\JustPingPong\JustPingPong\JustPingPong\bin\Debug\JustPingPong.pdb
+F:\TelerikProgramming\Homework\JustGames\JustPingPong\JustPingPong\JustPingPong\obj\Debug\JustPingPong.csprojResolveAssemblyReference.cache
+F:\TelerikProgramming\Homework\JustGames\JustPingPong\JustPingPong\JustPingPong\obj\Debug\JustPingPong.exe
+F:\TelerikProgramming\Homework\JustGames\JustPingPong\JustPingPong\JustPingPong\obj\Debug\JustPingPong.pdb
+F:\Projects\BrudersOldProjects\JustGames\JustPingPong\JustPingPong\JustPingPong\bin\Debug\JustPingPong.exe.config
+F:\Projects\BrudersOldProjects\JustGames\JustPingPong\JustPingPong\JustPingPong\bin\Debug\JustPingPong.exe
+F:\Projects\BrudersOldProjects\JustGames\JustPingPong\JustPingPong\JustPingPong\bin\Debug\JustPingPong.pdb
+F:\Projects\BrudersOldProjects\JustGames\JustPingPong\JustPingPong\JustPingPong\obj\Debug\JustPingPong.csprojResolveAssemblyReference.cache
+F:\Projects\BrudersOldProjects\JustGames\JustPingPong\JustPingPong\JustPingPong\obj\Debug\JustPingPong.csproj.CoreCompileInputs.cache
+F:\Projects\BrudersOldProjects\JustGames\JustPingPong\JustPingPong\JustPingPong\obj\Debug\JustPingPong.exe
+F:\Projects\BrudersOldProjects\JustGames\JustPingPong\JustPingPong\JustPingPong\obj\Debug\JustPingPong.pdb

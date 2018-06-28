@@ -1,0 +1,13 @@
+F:\TelerikProgramming\Homework\JustGames\JustHangman\JustHangMan\JustHangMan\bin\Debug\JustHangMan.exe.config
+F:\TelerikProgramming\Homework\JustGames\JustHangman\JustHangMan\JustHangMan\bin\Debug\JustHangMan.exe
+F:\TelerikProgramming\Homework\JustGames\JustHangman\JustHangMan\JustHangMan\bin\Debug\JustHangMan.pdb
+F:\TelerikProgramming\Homework\JustGames\JustHangman\JustHangMan\JustHangMan\obj\Debug\JustHangMan.csprojResolveAssemblyReference.cache
+F:\TelerikProgramming\Homework\JustGames\JustHangman\JustHangMan\JustHangMan\obj\Debug\JustHangMan.exe
+F:\TelerikProgramming\Homework\JustGames\JustHangman\JustHangMan\JustHangMan\obj\Debug\JustHangMan.pdb
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\JustHangMan\bin\Debug\JustHangMan.exe.config
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\JustHangMan\bin\Debug\JustHangMan.exe
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\JustHangMan\bin\Debug\JustHangMan.pdb
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\JustHangMan\obj\Debug\JustHangMan.csprojResolveAssemblyReference.cache
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\JustHangMan\obj\Debug\JustHangMan.csproj.CoreCompileInputs.cache
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\JustHangMan\obj\Debug\JustHangMan.exe
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\JustHangMan\obj\Debug\JustHangMan.pdb

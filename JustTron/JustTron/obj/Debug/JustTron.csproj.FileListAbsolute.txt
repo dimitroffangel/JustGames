@@ -1,0 +1,13 @@
+F:\TelerikProgramming\Homework\JustGames\JustTron\JustTron\JustTron\bin\Debug\JustTron.exe.config
+F:\TelerikProgramming\Homework\JustGames\JustTron\JustTron\JustTron\bin\Debug\JustTron.exe
+F:\TelerikProgramming\Homework\JustGames\JustTron\JustTron\JustTron\bin\Debug\JustTron.pdb
+F:\TelerikProgramming\Homework\JustGames\JustTron\JustTron\JustTron\obj\Debug\JustTron.csprojResolveAssemblyReference.cache
+F:\TelerikProgramming\Homework\JustGames\JustTron\JustTron\JustTron\obj\Debug\JustTron.exe
+F:\TelerikProgramming\Homework\JustGames\JustTron\JustTron\JustTron\obj\Debug\JustTron.pdb
+F:\Projects\Games\JustGames\JustTron\JustTron\JustTron\bin\Debug\JustTron.exe.config
+F:\Projects\Games\JustGames\JustTron\JustTron\JustTron\bin\Debug\JustTron.exe
+F:\Projects\Games\JustGames\JustTron\JustTron\JustTron\bin\Debug\JustTron.pdb
+F:\Projects\Games\JustGames\JustTron\JustTron\JustTron\obj\Debug\JustTron.csprojResolveAssemblyReference.cache
+F:\Projects\Games\JustGames\JustTron\JustTron\JustTron\obj\Debug\JustTron.csproj.CoreCompileInputs.cache
+F:\Projects\Games\JustGames\JustTron\JustTron\JustTron\obj\Debug\JustTron.exe
+F:\Projects\Games\JustGames\JustTron\JustTron\JustTron\obj\Debug\JustTron.pdb

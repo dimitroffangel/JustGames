@@ -1,0 +1,11 @@
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\HangAI\bin\Debug\netcoreapp2.0\HangAI.deps.json
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\HangAI\bin\Debug\netcoreapp2.0\HangAI.runtimeconfig.json
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\HangAI\bin\Debug\netcoreapp2.0\HangAI.runtimeconfig.dev.json
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\HangAI\bin\Debug\netcoreapp2.0\HangAI.dll
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\HangAI\bin\Debug\netcoreapp2.0\HangAI.pdb
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\HangAI\obj\Debug\netcoreapp2.0\HangAI.csprojResolveAssemblyReference.cache
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\HangAI\obj\Debug\netcoreapp2.0\HangAI.csproj.CoreCompileInputs.cache
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\HangAI\obj\Debug\netcoreapp2.0\HangAI.AssemblyInfoInputs.cache
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\HangAI\obj\Debug\netcoreapp2.0\HangAI.AssemblyInfo.cs
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\HangAI\obj\Debug\netcoreapp2.0\HangAI.dll
+F:\Projects\Games\JustGames\JustHangman\JustHangMan\HangAI\obj\Debug\netcoreapp2.0\HangAI.pdb

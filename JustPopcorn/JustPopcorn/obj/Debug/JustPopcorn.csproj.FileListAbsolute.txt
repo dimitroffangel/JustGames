@@ -1,0 +1,13 @@
+F:\TelerikProgramming\Homework\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\bin\Debug\JustPopcorn.exe.config
+F:\TelerikProgramming\Homework\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\bin\Debug\JustPopcorn.exe
+F:\TelerikProgramming\Homework\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\bin\Debug\JustPopcorn.pdb
+F:\TelerikProgramming\Homework\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.csprojResolveAssemblyReference.cache
+F:\TelerikProgramming\Homework\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.exe
+F:\TelerikProgramming\Homework\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.pdb
+F:\Projects\Games\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\bin\Debug\JustPopcorn.exe.config
+F:\Projects\Games\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\bin\Debug\JustPopcorn.exe
+F:\Projects\Games\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\bin\Debug\JustPopcorn.pdb
+F:\Projects\Games\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.csprojResolveAssemblyReference.cache
+F:\Projects\Games\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.csproj.CoreCompileInputs.cache
+F:\Projects\Games\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.exe
+F:\Projects\Games\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.pdb

@@ -1,0 +1,13 @@
+F:\TelerikProgramming\Homework\JustGames\JustSnake\JustSnake\JustSnake\bin\Debug\JustSnake.exe.config
+F:\TelerikProgramming\Homework\JustGames\JustSnake\JustSnake\JustSnake\bin\Debug\JustSnake.exe
+F:\TelerikProgramming\Homework\JustGames\JustSnake\JustSnake\JustSnake\bin\Debug\JustSnake.pdb
+F:\TelerikProgramming\Homework\JustGames\JustSnake\JustSnake\JustSnake\obj\Debug\JustSnake.csprojResolveAssemblyReference.cache
+F:\TelerikProgramming\Homework\JustGames\JustSnake\JustSnake\JustSnake\obj\Debug\JustSnake.exe
+F:\TelerikProgramming\Homework\JustGames\JustSnake\JustSnake\JustSnake\obj\Debug\JustSnake.pdb
+F:\Projects\Games\JustGames\JustSnake\JustSnake\JustSnake\bin\Debug\JustSnake.exe.config
+F:\Projects\Games\JustGames\JustSnake\JustSnake\JustSnake\bin\Debug\JustSnake.exe
+F:\Projects\Games\JustGames\JustSnake\JustSnake\JustSnake\bin\Debug\JustSnake.pdb
+F:\Projects\Games\JustGames\JustSnake\JustSnake\JustSnake\obj\Debug\JustSnake.csprojResolveAssemblyReference.cache
+F:\Projects\Games\JustGames\JustSnake\JustSnake\JustSnake\obj\Debug\JustSnake.csproj.CoreCompileInputs.cache
+F:\Projects\Games\JustGames\JustSnake\JustSnake\JustSnake\obj\Debug\JustSnake.exe
+F:\Projects\Games\JustGames\JustSnake\JustSnake\JustSnake\obj\Debug\JustSnake.pdb
