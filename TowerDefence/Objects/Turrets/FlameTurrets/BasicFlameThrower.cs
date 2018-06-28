@@ -28,6 +28,7 @@ namespace TowerDefence.Objects.Turrets
 
             else if (this.LevelDamage == 2)
             {
+                //test
                 this.Damage = SetUpVariables.Level_2_FireBunker_Damage;
                 this.FireEffect = 5;
             }
