@@ -11,3 +11,10 @@ F:\Projects\Games\JustGames\TowerDefence\TowerDefence\TowerDefence\obj\Debug\Tow
 F:\Projects\Games\JustGames\TowerDefence\TowerDefence\TowerDefence\obj\Debug\TowerDefence.csproj.CoreCompileInputs.cache
 F:\Projects\Games\JustGames\TowerDefence\TowerDefence\TowerDefence\obj\Debug\TowerDefence.exe
 F:\Projects\Games\JustGames\TowerDefence\TowerDefence\TowerDefence\obj\Debug\TowerDefence.pdb
+F:\Projects\Games\JustGames\TowerDefence\TowerDefence\obj\Debug\TowerDefence.csprojResolveAssemblyReference.cache
+F:\Projects\Games\JustGames\TowerDefence\TowerDefence\obj\Debug\TowerDefence.csproj.CoreCompileInputs.cache
+F:\Projects\Games\JustGames\TowerDefence\TowerDefence\obj\Debug\TowerDefence.exe
+F:\Projects\Games\JustGames\TowerDefence\TowerDefence\obj\Debug\TowerDefence.pdb
+F:\Projects\Games\JustGames\TowerDefence\TowerDefence\bin\Debug\TowerDefence.exe.config
+F:\Projects\Games\JustGames\TowerDefence\TowerDefence\bin\Debug\TowerDefence.exe
+F:\Projects\Games\JustGames\TowerDefence\TowerDefence\bin\Debug\TowerDefence.pdb

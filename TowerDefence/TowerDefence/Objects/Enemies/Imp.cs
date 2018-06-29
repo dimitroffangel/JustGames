@@ -16,6 +16,7 @@ namespace TowerDefence.Objects.Enemies
         {
             this.Health = 70;
             this.MoveRate = 0.5f;
+            this.InitialMoveRate = this.MoveRate;
         }
     }
 }

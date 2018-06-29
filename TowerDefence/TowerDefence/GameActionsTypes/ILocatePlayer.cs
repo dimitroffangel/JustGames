@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TowerDefence
+﻿namespace TowerDefence
 {
     abstract class ILocatePlayer : ICollide
     {

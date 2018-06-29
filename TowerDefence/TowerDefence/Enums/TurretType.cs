@@ -8,7 +8,7 @@
         FireBunker_Infernal,
         FireBunker_Trap,
         FireBunker_Hellion,
-        MissleBunker,
+        Tardus,
         LaserAnnihilator
     }
 }

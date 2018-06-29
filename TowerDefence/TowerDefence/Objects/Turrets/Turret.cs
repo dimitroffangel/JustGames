@@ -47,7 +47,7 @@ namespace TowerDefence
             else if (TurretType.LaserAnnihilator == m_Type)
                 m_Ammo = 1;
 
-            else if (TurretType.MissleBunker == m_Type)
+            else if (TurretType.Tardus == m_Type)
                 m_Ammo = 40;
         }
 
@@ -65,7 +65,7 @@ namespace TowerDefence
                     m_Damage = SetUpVariables.Level_3_Cannon_Damage;
             }
 
-            else if(m_Type == TurretType.MissleBunker)
+            else if(m_Type == TurretType.Tardus)
             {
                 if (LevelDamage == 1)
                     m_Damage = SetUpVariables.Level_1_MissleBunker_Damage;
@@ -102,7 +102,7 @@ namespace TowerDefence
             else if (TurretType.FireBunker_Hellion == m_Type)
                 FireOn(0);
 
-            else if (TurretType.MissleBunker == m_Type)
+            else if (TurretType.Tardus == m_Type)
             {
                 for (int i = 0; i < 2; i++)
                     FireOn(i);
@@ -211,8 +211,8 @@ namespace TowerDefence
                             }
                         }
 
-                        this.internal_Variables.BleedingEnemies.Add(new BleedingEffect(ref enemy, this.FireEffect, 3, Enums.BleedingTypes.FireBleed,
-                            ref this.internal_Variables));
+                        this.internal_Variables.BleedingEnemies.Add(new BleedingEffect(ref enemy, this.FireEffect, 3, 
+                            Enums.BleedingTypes.FireBleed, ref this.internal_Variables));
                         enemy.BleedingEffects.Add(Enums.BleedingTypes.FireBleed);
                     }
 
@@ -278,6 +278,17 @@ namespace TowerDefence
                             }
                             counter++;
                         }
+
+
+                    }
+
+                    if (this.m_Type == TurretType.Tardus)
+                    {
+                        enemy.MoveRate *= 2;
+                        this.internal_Variables.SlowedEnemies.Add(enemy);
+                        enemy.State = Enums.EnemyState.Slowed;
+                        enemy.SlowedTime = DateTime.Now;
+                        enemy.SlowedDuration = SetUpVariables.Level_1_Tardus_Slow_Duration;
                     }
 
                     if (enemy.GetHealthStatus() > 0)

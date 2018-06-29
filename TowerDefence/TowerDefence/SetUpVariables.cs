@@ -21,6 +21,8 @@ namespace TowerDefence
         public const float Level_2_MissleBunker_Damage = 48;
         public const float Level_3_MissleBunker_Damage = 52;
 
+        public const float Level_1_Tardus_Slow_Duration = 2.5f;
+
         // enemies time before invading the territory
         public const int warmUPTime = 2;
 
@@ -35,7 +37,8 @@ namespace TowerDefence
         public List<Enemy> EnemyPositions = new List<Enemy>();
         public List<Turret> TurretsPosition = new List<Turret>() ;
         public List<Position> ObstaclePositions = new List<Position>();
-        public List<FireTrapper> fireTrappers = new List<FireTrapper>();
+        public List<FireTrapper> FireTrappers = new List<FireTrapper>();
+        public List<Enemy> SlowedEnemies = new List<Enemy>();
         public List<Hellion> Hellions = new List<Hellion>();
         public List<BleedingEffect> BleedingEnemies = new List<BleedingEffect>();
         public List<Grenade> Grenades = new List<Grenade>();

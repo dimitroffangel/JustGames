@@ -143,7 +143,7 @@ namespace TowerDefence
                     else if (this.Variables.PocketMoney >= 165 && userInput.Key == ConsoleKey.I)
                     {
                         turretSymbol = '%';
-                        newTurretType = TurretType.MissleBunker;
+                        newTurretType = TurretType.Tardus;
                         this.Variables.PocketMoney -= 165;
                     }
 
@@ -165,18 +165,19 @@ namespace TowerDefence
 
                     if (userInput.Key == ConsoleKey.P || userInput.Key == ConsoleKey.U)
                         this.Variables.TurretsPosition.Add(new Cannon(newTurretX, newTurretY, newTurretType, placeOn, ref this.Variables));
-                    // TODO ConsoleKey.I
+                    else if (userInput.Key == ConsoleKey.I)
+                        this.Variables.TurretsPosition.Add(new Tardus(newTurretX, newTurretY, newTurretType, placeOn, ref this.Variables));
                     else if (userInput.Key == ConsoleKey.O)
                     {
                         var trap = new FireTrapper(newTurretX, newTurretY, newTurretType, placeOn, ref this.Variables, false);
 
                         // else no sense to care for the newly created gadget 
-                        for(int j = 0; j  < this.Variables.Battleground.Count; j++)
+                        for (int j = 0; j < this.Variables.Battleground.Count; j++)
                         {
                             var curPosition = this.Variables.Battleground[j];
                             if (curPosition.Uniq_X == newTurretX && curPosition.Uniq_Y == newTurretY)
                             {
-                                this.Variables.fireTrappers.Add(trap);
+                                this.Variables.FireTrappers.Add(trap);
                                 break;
                             }
                         }

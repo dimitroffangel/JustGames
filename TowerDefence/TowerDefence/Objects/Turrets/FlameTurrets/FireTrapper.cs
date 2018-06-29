@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TowerDefence.Objects.Turrets.FlameTurrets
 {
@@ -51,7 +47,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 var newTrapPosition = internal_Variables.Battleground[trapBattleIndex - (1 + this.currentExtensionCounter)];
                 var fireTrap = new FireTrapper(newTrapPosition.Uniq_X, newTrapPosition.Uniq_Y, 
                     TurretType.FireBunker_Trap, m_Placement, ref internal_Variables, true);
-                this.Variables.fireTrappers.Add(fireTrap);
+                this.Variables.FireTrappers.Add(fireTrap);
                 Console.SetCursorPosition(newTrapPosition.Uniq_X, newTrapPosition.Uniq_Y);
                 Console.Write("&");
 

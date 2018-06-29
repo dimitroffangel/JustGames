@@ -1,5 +1,4 @@
 ﻿using System;
-using TowerDefence.Objects;
 using TowerDefence.Objects.Enemies;
 
 namespace TowerDefence
@@ -23,6 +22,19 @@ namespace TowerDefence
             return false;
         }
 
+        private int GetBattlefieldIndex(int x, int y)
+        {
+            for(int i = 0; i < this.Variables.Battleground.Count; i++)
+            {
+                var currentBattlefield = this.Variables.Battleground[i];
+
+                if (currentBattlefield.Uniq_X == x && currentBattlefield.Uniq_Y == y)
+                    return i+1;
+            }
+
+            throw new ArgumentNullException("Searching for the battlefield index there was none found");
+        }
+
         private void MoveEnemies()
         {
             for (int i = 0; i < this.Variables.EnemyPositions.Count; i++)
@@ -36,20 +48,19 @@ namespace TowerDefence
                 if ((curTime - enemy.TimeSinceLastMove).TotalSeconds >= enemy.MoveRate)
                 {
                     enemy.TimeSinceLastMove = DateTime.Now;
+                    var nextEnemyMoveIndex = GetBattlefieldIndex(enemy.Uniq_X, enemy.Uniq_Y);
+                    var nextEnemyMove = this.Variables.Battleground[nextEnemyMoveIndex];
 
-                    if (enemy.Uniq_Y <= Console.WindowHeight - 5 && enemy.Uniq_X < Console.WindowWidth - 31 &&
-                        !AreEnemiesColliding(enemy.Uniq_X, enemy.Uniq_Y + 1))
-                        enemy.Uniq_Y++;
+                    if (AreEnemiesColliding(nextEnemyMove.Uniq_X, nextEnemyMove.Uniq_Y))
+                        continue;
 
-                    else
+                    enemy.Uniq_X = nextEnemyMove.Uniq_X;
+                    enemy.Uniq_Y = nextEnemyMove.Uniq_Y;
+
+                    if (nextEnemyMoveIndex == this.Variables.Battleground.Count - 1)
                     {
-                        if (enemy.Uniq_X < Console.WindowWidth - 31 && !AreEnemiesColliding(enemy.Uniq_X + 1, enemy.Uniq_Y))
-                            enemy.Uniq_X++;
-
-                        else if (!AreEnemiesColliding(enemy.Uniq_X, enemy.Uniq_Y - 1))
-                        {
                             // the enemy has reached its final destination time to kill him
-                            if (enemy.Uniq_Y <= SetUpVariables.InitialRow)
+                            if (enemy.Uniq_Y == SetUpVariables.InitialRow)
                             {
                                 enemy.Uniq_Y = SetUpVariables.InitialRow;
                                 enemy.Uniq_X = SetUpVariables.InitialCol + 1;
@@ -61,7 +72,6 @@ namespace TowerDefence
                             }
 
                             enemy.Uniq_Y--;
-                        }
                     }
 
                     if (enemy.Uniq_Y != initialEnemyY || enemy.Uniq_X != initialEnemyX)
@@ -71,9 +81,9 @@ namespace TowerDefence
                     }
 
                     // review if the enemy is colliding with a fire trap
-                    for(int j = 0; j < this.Variables.fireTrappers.Count; j++)
+                    for(int j = 0; j < this.Variables.FireTrappers.Count; j++)
                     {
-                        var curTrap = this.Variables.fireTrappers[j];
+                        var curTrap = this.Variables.FireTrappers[j];
 
                         if(curTrap.Uniq_X == enemy.Uniq_X && curTrap.Uniq_Y == enemy.Uniq_Y)
                         {
@@ -91,7 +101,7 @@ namespace TowerDefence
                             }
 
                             // remove the trap
-                            this.Variables.fireTrappers.Remove(curTrap);
+                            this.Variables.FireTrappers.Remove(curTrap);
                             j--;
 
                         }
@@ -101,7 +111,6 @@ namespace TowerDefence
                 Console.SetCursorPosition(enemy.Uniq_X, enemy.Uniq_Y);
                 Console.Write("$");
             }
-
         }
 
         public void SpawnEnemies()
@@ -112,7 +121,8 @@ namespace TowerDefence
 
                 if (!AreEnemiesColliding(SetUpVariables.InitialCol + 1, SetUpVariables.InitialRow))
                 {
-                    this.Variables.EnemyPositions.Add(new Imp(SetUpVariables.InitialCol + 1, SetUpVariables.InitialRow, ref this.Variables));
+                    this.Variables.EnemyPositions.Add(new Imp(this.Variables.Battleground[0].Uniq_X, this.Variables.Battleground[0].Uniq_Y,
+                        ref this.Variables));
                     this.Variables.EnemiesCount--;
                 }
             }

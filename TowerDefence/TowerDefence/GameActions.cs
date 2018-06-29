@@ -38,6 +38,7 @@ namespace TowerDefence
                 SpawnEnemies();
                 ExtendTraps();
                 MoveHellions();
+                CheckSlowedEnemies();
                 TurretLogic();
                 InitiateBleedingsEffect();
                 InitiateGrenades();
@@ -63,6 +64,8 @@ namespace TowerDefence
                 this.Variables.TurretsPosition.Clear();
                 this.Variables.ObstaclePositions.Clear();
                 this.Variables.Hellions.Clear();
+                this.Variables.FireTrappers.Clear();
+                this.Variables.SlowedEnemies.Clear();
                 this.Variables.BleedingEnemies.Clear();
                 this.Variables.Grenades.Clear();
             }
@@ -75,14 +78,35 @@ namespace TowerDefence
 
         private void ExtendTraps()
         {
-            for (int i = 0; i <this.Variables.fireTrappers.Count; i++)
-                this.Variables.fireTrappers[i].TryExtendingExplosion();
+            for (int i = 0; i <this.Variables.FireTrappers.Count; i++)
+                this.Variables.FireTrappers[i].TryExtendingExplosion();
         }
 
         private void MoveHellions()
         {
             foreach (var hellion in this.Variables.Hellions)
                 hellion.Move();
+        }
+
+        private void CheckSlowedEnemies()
+        {
+            for (int i = 0; i < this.Variables.SlowedEnemies.Count; i++)
+            {
+                var curEnemy = this.Variables.SlowedEnemies[i];
+
+                // if the duration is lower than the time passed since the slow was incarnated
+                if ((DateTime.Now - curEnemy.SlowedTime).Seconds >= curEnemy.SlowedDuration)
+                {
+                    // remove the enemy from the list
+                    curEnemy.SlowedDuration = 0;
+                    curEnemy.MoveRate = curEnemy.InitialMoveRate;
+                    // so the slow time even in the future you check whether there is a slow time to not throw the code in to complete disarray
+                    curEnemy.SlowedTime = default(DateTime); 
+                    this.Variables.SlowedEnemies.Remove(curEnemy);
+                    i--;
+                }
+
+            }
         }
 
         public void LoadStartingMenu()

@@ -46,6 +46,7 @@
     <Compile Include="ClassConfig.cs" />
     <Compile Include="Enums\BleedingsTypes.cs" />
     <Compile Include="Enums\EnemyType.cs" />
+    <Compile Include="Enums\EnemyState.cs" />
     <Compile Include="GameActions.cs" />
     <Compile Include="GameActionsTypes\ICollide.cs" />
     <Compile Include="GameActionsTypes\HumanInterface.cs" />
@@ -57,7 +58,6 @@
     <Compile Include="Objects\Enemies\Enemy.cs" />
     <Compile Include="Objects\Grenade.cs" />
     <Compile Include="Objects\Position.cs" />
-    <Compile Include="Objects\Turrets\FireTrap.cs" />
     <Compile Include="Objects\Turrets\FlameTurrets\BasicFlameThrower.cs" />
     <Compile Include="Objects\Turrets\Cannon.cs" />
     <Compile Include="Objects\Turrets\FlameTurrets\Demoman.cs" />
@@ -65,6 +65,7 @@
     <Compile Include="Objects\Turrets\FlameTurrets\FlameThrower.cs" />
     <Compile Include="Objects\Turrets\FlameTurrets\Hellion.cs" />
     <Compile Include="Objects\Turrets\FlameTurrets\Infernal.cs" />
+    <Compile Include="Objects\Turrets\Tardus.cs" />
     <Compile Include="SetUpVariables.cs" />
     <Compile Include="StartUp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

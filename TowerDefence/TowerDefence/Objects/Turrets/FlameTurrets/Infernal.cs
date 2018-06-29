@@ -1,7 +1,4 @@
-﻿using System;
-
-
-namespace TowerDefence.Objects.Turrets.FlameTurrets
+﻿namespace TowerDefence.Objects.Turrets.FlameTurrets
 {
     class Infernal : FlameThrower
     {
