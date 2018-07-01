@@ -169,9 +169,9 @@ namespace TowerDefence
                         this.Variables.TurretsPosition.Add(new Tardus(newTurretX, newTurretY, newTurretType, placeOn, ref this.Variables));
                     else if (userInput.Key == ConsoleKey.O)
                     {
-                        var trap = new FireTrapper(newTurretX, newTurretY, newTurretType, placeOn, ref this.Variables, false);
+                        var turret = new Hellion(newTurretX, newTurretY, newTurretType, placeOn, ref this.Variables);
 
-                        // else no sense to care for the newly created gadget 
+                       /* // else no sense to care for the newly created gadget 
                         for (int j = 0; j < this.Variables.Battleground.Count; j++)
                         {
                             var curPosition = this.Variables.Battleground[j];
@@ -181,8 +181,9 @@ namespace TowerDefence
                                 break;
                             }
                         }
-
-                        //  this.Variables.Hellions.Add(hellion);
+                        */
+                        this.Variables.Hellions.Add(turret);
+                        this.Variables.TurretsPosition.Add(turret);
                     }
                 }
             }
