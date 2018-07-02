@@ -10,6 +10,7 @@ namespace TowerDefence.Objects.Enemies
     {
         public Imp(int x, int y, ref SetUpVariables variables) : base(x, y, ref variables)
         {
+
         }
 
         protected override void SetStats()

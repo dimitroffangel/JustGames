@@ -18,7 +18,6 @@ namespace TowerDefence
                 if (this.Variables.EnemyPositions[i].Uniq_X == x && this.Variables.EnemyPositions[i].Uniq_Y == y)
                     return true;
             }
-
             return false;
         }
 

@@ -7,7 +7,7 @@ namespace TowerDefence
 {
     class StartUp
     {
-        
+
         static void Main()
         {
             Console.CursorVisible = false;
