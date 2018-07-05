@@ -21,8 +21,8 @@ namespace TowerDefence
 
             var startTime = DateTime.Now;
 
-            while (!this.Variables.IsGameOver && 
-                this.Variables.EnemiesCurrentlyKilled + this.Variables.EnemiesCurrentlyMissed != this.Variables.EnemiesInitially)
+           while (!this.Variables.IsGameOver && 
+                (this.Variables.EnemiesCurrentlyKilled + this.Variables.EnemiesCurrentlyMissed != this.Variables.EnemiesInitially))
             {
                 Thread.Sleep(100);
 

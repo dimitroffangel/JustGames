@@ -43,10 +43,17 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
                 if (minDistance > curDistance)
                 {
-                    minIndex = index;
-                    minDistance = curDistance;
+                    if((this.Target != null && (this.Target.Uniq_X != enemy.Uniq_X || this.Target.Uniq_Y != enemy.Uniq_Y)) || 
+                        this.Target == null)
+                    {
+                        minIndex = index;
+                        minDistance = curDistance;
+                    }
                 }
             }
+
+            if (internal_Variables.EnemyPositions.Count == 0 || minIndex < 0)
+                return;
 
             this.Target = internal_Variables.EnemyPositions[minIndex];
             this.initialTargetPosition = new Position(this.Target.Uniq_X, this.Target.Uniq_Y);
@@ -275,6 +282,18 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
                 blocksCircled = (int)Math.Floor(hellionTakenTime / this.Target.MoveRate);
             }
+            
+            /* if the hellionIndexTargetPosition == internal_Variables.BattleGround.Count 
+             * then the target should find a new target, if the new target emerges with the same problem, then should traverse all targets
+             * before this one if all give the equivalent situation, then the hellion is useless and it should be done something to it
+             */
+
+            if(hellionIndexTargetPosition == internal_Variables.Battleground.Count)
+            {
+                FindTarget();
+                SetHellionRoad();
+                return;
+            }
 
             hellionTargetPosition = internal_Variables.Battleground[hellionIndexTargetPosition];
             ExhibitRoadTaken(hellionTargetPosition);
@@ -422,6 +441,13 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 // clear the path
                 ClearPathData();
                 InitialShortPath();
+
+                if (this.Target == null || (this.Target != null && this.Target.GetHealthStatus() <= 0))
+                {
+                    this.Target = null;
+                    FindTarget();
+                }
+
                 FindShortestPath();
                 SetHellionRoad();
                 return;
@@ -432,10 +458,13 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
             m_timeDeparture = currentTime;
 
-            if (this.Target == null)
+            if (this.Target == null || this.Target.GetHealthStatus() <= 0)
             {
                 if(initialTargetPosition != null) // this is not the first time to search for a new target
                     this.ClearPathData();
+
+                if (this.Target != null && this.Target.GetHealthStatus() <= 0)
+                    this.Target = null;
 
                 InitialShortPath();
                 FindShortestPath();

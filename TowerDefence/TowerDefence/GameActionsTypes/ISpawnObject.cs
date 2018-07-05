@@ -48,6 +48,20 @@ namespace TowerDefence
                 {
                     enemy.TimeSinceLastMove = DateTime.Now;
                     var nextEnemyMoveIndex = GetBattlefieldIndex(enemy.Uniq_X, enemy.Uniq_Y);
+                    
+                    if (nextEnemyMoveIndex == this.Variables.Battleground.Count)
+                    {
+                        // the enemy has reached its final destination time to kill him
+                        Console.SetCursorPosition(enemy.Uniq_X, enemy.Uniq_Y);
+                        Console.Write(" ");
+                        // increment the missed enemies variable and remove the references to the object
+                        this.Variables.EnemiesCurrentlyMissed++;
+
+                        this.Variables.EnemyPositions.Remove(enemy);
+                        i--;
+                        continue;
+                    }
+
                     var nextEnemyMove = this.Variables.Battleground[nextEnemyMoveIndex];
 
                     if (AreEnemiesColliding(nextEnemyMove.Uniq_X, nextEnemyMove.Uniq_Y))
@@ -56,22 +70,6 @@ namespace TowerDefence
                     enemy.Uniq_X = nextEnemyMove.Uniq_X;
                     enemy.Uniq_Y = nextEnemyMove.Uniq_Y;
 
-                    if (nextEnemyMoveIndex == this.Variables.Battleground.Count - 1)
-                    {
-                            // the enemy has reached its final destination time to kill him
-                            if (enemy.Uniq_Y == SetUpVariables.InitialRow)
-                            {
-                                enemy.Uniq_Y = SetUpVariables.InitialRow;
-                                enemy.Uniq_X = SetUpVariables.InitialCol + 1;
-                                // increment the missed enemies variable and remove the references to the object
-                                this.Variables.EnemiesCurrentlyMissed++;
-                                this.Variables.EnemyPositions.Remove(enemy);
-                                i--;
-                                continue;
-                            }
-
-                            enemy.Uniq_Y--;
-                    }
 
                     if (enemy.Uniq_Y != initialEnemyY || enemy.Uniq_X != initialEnemyX)
                     {
