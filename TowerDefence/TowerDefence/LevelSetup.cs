@@ -40,7 +40,6 @@ namespace TowerDefence
                     this.Variables.CurrentCol += 2;
                     Console.SetCursorPosition(this.Variables.CurrentCol--, this.Variables.CurrentRow);
                     Console.Write("|");
-
                 
                     this.Variables.Battleground.Add(new Position(this.Variables.CurrentCol, this.Variables.CurrentRow));
                     Console.SetCursorPosition(this.Variables.CurrentCol--, this.Variables.CurrentRow++);

@@ -20,7 +20,14 @@ namespace TowerDefence
 
         public float DistanceBetween(Position a)
         {
-            return Math.Abs((this.uniq_X - a.uniq_X) * (this.uniq_X - a.uniq_X) + (this.Uniq_Y - a.Uniq_Y) * (this.Uniq_Y - a.uniq_Y));
+            return (float)Math.Sqrt((this.uniq_X - a.uniq_X) * (this.uniq_X - a.uniq_X) + (this.Uniq_Y - a.Uniq_Y) * (this.Uniq_Y - a.uniq_Y));
+        }
+
+        public float DistanceBetweenNearbyBlocks()
+        {
+            Position a = new Position(0, 0);
+            Position b = new Position(0, 1);
+            return a.DistanceBetween(b);
         }
 
         public override bool Equals(object obj)

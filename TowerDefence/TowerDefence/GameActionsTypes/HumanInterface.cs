@@ -136,7 +136,7 @@ namespace TowerDefence
                     else if (this.Variables.PocketMoney >= 340 && userInput.Key == ConsoleKey.O)
                     {
                         turretSymbol = '&';
-                        newTurretType = TurretType.FireBunker_Trap;
+                        newTurretType = TurretType.FireBunker_Hellion;
                         this.Variables.PocketMoney -= 340;
                     }
 

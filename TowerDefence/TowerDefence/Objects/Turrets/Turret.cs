@@ -170,12 +170,16 @@ namespace TowerDefence
             {
                 var enemy = internal_Variables.EnemyPositions[i];
 
-                if (TurretType.FireBunker_Hellion == m_Type)
+                if (TurretType.FireBunker_Hellion == m_Type && this.Target != null)
                 {
                     if((x + 1 == this.Target.Uniq_X && y - 1 == this.Target.Uniq_Y) ||
                         (x + 1 == this.Target.Uniq_X && y + 1 == this.Target.Uniq_Y) ||
                        (x - 1 == this.Target.Uniq_X && y - 1 == this.Target.Uniq_Y) ||
-                       (x - 1 == this.Target.Uniq_X && y + 1 == this.Target.Uniq_Y))
+                       (x - 1 == this.Target.Uniq_X && y + 1 == this.Target.Uniq_Y) || 
+                       (x == this.Target.Uniq_X && y + 1 == this.Target.Uniq_Y) ||
+                       (x == this.Target.Uniq_X && y - 1 == this.Target.Uniq_Y) ||
+                       (x + 1 == this.Target.Uniq_X && y == this.Target.Uniq_Y) ||
+                       (x - 1 == this.Target.Uniq_X && y == this.Target.Uniq_Y))
                     {
                         this.Target.TakeDamage(m_Damage);
 
