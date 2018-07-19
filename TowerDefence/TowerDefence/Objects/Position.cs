@@ -20,7 +20,8 @@ namespace TowerDefence
 
         public float DistanceBetween(Position a)
         {
-            return (float)Math.Sqrt((this.uniq_X - a.uniq_X) * (this.uniq_X - a.uniq_X) + (this.Uniq_Y - a.Uniq_Y) * (this.Uniq_Y - a.uniq_Y));
+            return ((this.uniq_X - a.uniq_X) * (this.uniq_X - a.uniq_X) + 
+                (this.Uniq_Y - a.Uniq_Y) * (this.Uniq_Y - a.uniq_Y));
         }
 
         public float DistanceBetweenNearbyBlocks()
@@ -40,6 +41,16 @@ namespace TowerDefence
                    Uniq_Y == position.Uniq_Y;
         }
 
+        public override int GetHashCode()
+        {
+            var hashCode = 388665302;
+            hashCode = hashCode * -1521134295 + uniq_X.GetHashCode();
+            hashCode = hashCode * -1521134295 + uniq_Y.GetHashCode();
+            hashCode = hashCode * -1521134295 + Uniq_X.GetHashCode();
+            hashCode = hashCode * -1521134295 + Uniq_Y.GetHashCode();
+            return hashCode;
+        }
+
         public static bool operator ==(Position a, Position b)
         {
             if ((object)a == (object)b)
@@ -57,7 +68,11 @@ namespace TowerDefence
             if ((object)a == (object)b)
                 return false;
 
-            if ((object)a == null || (object)b == null)
+            if (((object)a == null && (object)b != null) || 
+                (object)a != null && (object)b == null)
+                return true;
+
+            if ((object)a == null && (object)b == null)
                 return true;
 
             return a.uniq_X != b.Uniq_X || a.uniq_Y != b.Uniq_Y;

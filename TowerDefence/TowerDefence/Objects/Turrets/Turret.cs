@@ -171,9 +171,7 @@ namespace TowerDefence
                 var enemy = internal_Variables.EnemyPositions[i];
 
                 if(enemy.GetHealthStatus() <= 0)
-                {
-                    int wtf = 42;
-                }
+                    return false;
 
                 if (TurretType.FireBunker_Hellion == m_Type && this.Target != null)
                 {
@@ -187,10 +185,7 @@ namespace TowerDefence
                        (x - 1 == this.Target.Uniq_X && y == this.Target.Uniq_Y))
                     {
                         if(this.Target.GetHealthStatus() <= 0)
-                        {
-                            int wtfF = 42;
                             return false;
-                        }
 
                         this.Target.TakeDamage(m_Damage);
 

@@ -68,6 +68,7 @@ namespace TowerDefence
                 this.Variables.SlowedEnemies.Clear();
                 this.Variables.BleedingEnemies.Clear();
                 this.Variables.Grenades.Clear();
+                this.Variables.Battleground.Clear();
             }
 
             else // remake the end game statements 

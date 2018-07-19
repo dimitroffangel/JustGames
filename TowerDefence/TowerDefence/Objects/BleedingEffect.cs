@@ -9,12 +9,9 @@ namespace TowerDefence.Objects
         private float m_Damage;
         private int m_Duration;
         private int m_CurDuration;
-        private float m_Interval;
         private BleedingTypes m_BleedingType;
         private DateTime m_StartTime;
-        private int uniqDamage;
-        private BleedingTypes fireBleed;
-
+       
         private SetUpVariables m_Variables;
 
         public BleedingEffect(ref Enemy enemy, int damage, int duration, BleedingTypes type, ref SetUpVariables variables)

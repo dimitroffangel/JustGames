@@ -8,26 +8,23 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
         private SetUpVariables internal_Variables;
         private DateTime m_timeDeparture;
         public const float m_MoveRate = 0.4f;
-
-        private Dictionary<Position, int> roadsCosts;
-        private Dictionary<Position, bool> map;
-        private Queue<Position> unvisitedNodes;
+        
         private List<Position> moveCommands;
         private Position initialTargetPosition;
-        private int currentCommand;
-        
+        private int currentCommands;
+        private List<int> availableBattlegrounds;
+
+        private List<Position> bfsCommands;
 
         public Hellion(int x, int y, TurretType turretType, TurretPlacement placement, 
             ref SetUpVariables variables) : base(x, y, turretType, placement, ref variables)
         {
             internal_Variables = variables;
             m_timeDeparture = DateTime.Now;
-
-            roadsCosts = new Dictionary<Position, int>(new PositionEqualityComparer());
-            map = new Dictionary<Position, bool>(new PositionEqualityComparer());
-            unvisitedNodes = new Queue<Position>();
             moveCommands = new List<Position>();
-            currentCommand = 0;
+            currentCommands = 0;
+
+            bfsCommands = new List<Position>();
         }
 
         private void FindTarget()
@@ -69,163 +66,209 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
         // calculate the speed with which the unit will reach the target or consecutive positions near it
         // on each new fallen rock the FindShortestPath must be reevaluated 
 
-        private void InitialShortPath()
+         /* 1) Get a List with the map
+          * 2) a recursive function to do the magic trick
+          * 3) the functions goes from the current positon to the block which has the closest distance to the target
+          * 4) when checking a position it should check if the movesCounter is bigger then the lowest amount of 
+          *  needed moves to reach the destination
+          */
+
+        private void FindAllBattlePaths()
         {
-            /* set all passable nodes to unvisited
-             * each distance to other nodes apart from the hellion position is inifinite
-             */
-
-            // add all positions to the list
-            for(int x = 0; x < Console.WindowWidth; x++)
-            {
-                for(int y = 0; y < Console.WindowHeight; y++)
-                {
-                    map.Add(new Position(x,y), false);
-                    roadsCosts.Add(new Position(x, y), int.MaxValue);
-                }
-            }
-
-            roadsCosts[new Position(Uniq_X, Uniq_Y)] = 0;
-            map[new Position(Uniq_X, Uniq_Y)] = true;
-
-            // start from the hellion position
-            roadsCosts[new Position(Uniq_X, Uniq_Y - 1)] = 1; // top
-            roadsCosts[new Position(Uniq_X + 1, Uniq_Y - 1)] = 1; // top-right
-            roadsCosts[new Position(Uniq_X + 1, Uniq_Y)] = 1; // right
-            roadsCosts[new Position(Uniq_X + 1, Uniq_Y + 1)] = 1; // bot-right
-            roadsCosts[new Position(Uniq_X, Uniq_Y + 1)] = 1; // bot
-            roadsCosts[new Position(Uniq_X - 1, Uniq_Y + 1)] = 1; // bot-left
-            roadsCosts[new Position(Uniq_X - 1, Uniq_Y)] = 1; // left
-            roadsCosts[new Position(Uniq_X - 1, Uniq_Y - 1)] = 1; // top-left
-
-            map[new Position(Uniq_X, Uniq_Y - 1)] = true; // top
-            map[new Position(Uniq_X + 1, Uniq_Y - 1)] = true; // top-right
-            map[new Position(Uniq_X + 1, Uniq_Y)] = true; // right
-            map[new Position(Uniq_X + 1, Uniq_Y + 1)] = true; // bot-right
-            map[new Position(Uniq_X, Uniq_Y + 1)] = true; // bot
-            map[new Position(Uniq_X - 1, Uniq_Y + 1)] = true; // bot-left
-            map[new Position(Uniq_X - 1, Uniq_Y)] = true; // left
-            map[new Position(Uniq_X - 1, Uniq_Y - 1)] = true; // top-left
-
-            unvisitedNodes.Enqueue(new Position(Uniq_X, Uniq_Y - 1)); // top
-            unvisitedNodes.Enqueue(new Position(Uniq_X + 1, Uniq_Y - 1)); // top-right
-            unvisitedNodes.Enqueue(new Position(Uniq_X + 1, Uniq_Y)); // right
-            unvisitedNodes.Enqueue(new Position(Uniq_X + 1, Uniq_Y + 1)); // bot-right 
-            unvisitedNodes.Enqueue(new Position(Uniq_X, Uniq_Y + 1)); // bot
-            unvisitedNodes.Enqueue(new Position(Uniq_X - 1, Uniq_Y + 1)); // bot-left
-            unvisitedNodes.Enqueue(new Position(Uniq_X - 1, Uniq_Y)); // left
-            unvisitedNodes.Enqueue(new Position(Uniq_X - 1, Uniq_Y - 1)); // top-left
+            /*
+             * foreach battle block find the shortest path to it -> FindBfsPath(block, this.Position, currentMoves)
+            */
         }
 
-        private void FindShortestPath()
+        private void FindBfsPath(Position enemy, Position currentPosition)
         {
-            while (unvisitedNodes.Count > 0)
+            if (this.Target == null || this.Target.GetHealthStatus() <= 0)
+                return;
+
+            // check if there is already such path found 
+            // declare all the possible roads, check if there is an obstacle on 'em if there is not
+            // move from there
+            float currentDistance = 100000001;
+            float minDistance = 100000001;
+            Position nearestPoint = new Position(0, 0);
+            Position currentDirection = new Position(0, 0);
+
+            // top
+            if ((currentPosition.Uniq_X >= 0 && currentPosition.Uniq_X < Console.WindowWidth &&
+                currentPosition.Uniq_Y - 1 >= 0 && currentPosition.Uniq_Y - 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.Uniq_X, currentPosition.Uniq_Y - 1) &&
+                !ContainsMove(currentPosition.Uniq_X, currentPosition.Uniq_Y - 1) &&
+                !ContainsObstacle(currentPosition.Uniq_X, currentPosition.Uniq_Y - 1)) ||
+                new Position(currentPosition.Uniq_X, currentPosition.Uniq_Y - 1) == enemy)
             {
-                var firstNode = unvisitedNodes.Dequeue();
-                int firstNodeCost = roadsCosts[new Position(firstNode.Uniq_X, firstNode.Uniq_Y)] + 1;
+                currentDirection = new Position(currentPosition.Uniq_X, currentPosition.Uniq_Y - 1);
 
-                if(ContainsTurret(firstNode.Uniq_X, firstNode.Uniq_Y) || ContainsObstacle(firstNode.Uniq_X, firstNode.Uniq_Y) || 
-                    ContainsBattleground(firstNode.Uniq_X, firstNode.Uniq_Y))
-                {
-                    roadsCosts[firstNode] = int.MaxValue;
-                    continue;
-                }
+                if (enemy == currentDirection)
+                    return;
 
-                // start from the hellion position
-                if (map.ContainsKey(new Position(firstNode.Uniq_X, firstNode.Uniq_Y - 1)))
-                {
-                    if (!map[new Position(firstNode.Uniq_X, firstNode.Uniq_Y - 1)])
-                    {
-                        roadsCosts[new Position(firstNode.Uniq_X, firstNode.Uniq_Y - 1)] = firstNodeCost; // top
-                        unvisitedNodes.Enqueue(new Position(firstNode.Uniq_X, firstNode.Uniq_Y - 1)); // top
-                        map[new Position(firstNode.Uniq_X, firstNode.Uniq_Y - 1)] = true;
-                    }
-                    else if (roadsCosts[new Position(firstNode.Uniq_X, firstNode.Uniq_Y - 1)] > firstNodeCost)
-                        roadsCosts[new Position(firstNode.Uniq_X, firstNode.Uniq_Y - 1)] = firstNodeCost; // top
-                }
-                if (map.ContainsKey(new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y - 1)))
-                {
-                    if (!map[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y - 1)])    // top-right
-                    {
-                        roadsCosts[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y - 1)] = firstNodeCost;
-                        unvisitedNodes.Enqueue(new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y - 1)); // top-right
-                        map[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y - 1)] = true;
-                    }
-                    else if (roadsCosts[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y - 1)] > firstNodeCost)
-                        roadsCosts[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y - 1)] = firstNodeCost;
-                }
+                currentDistance = enemy.DistanceBetween(currentDirection);
 
-                if (map.ContainsKey(new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y)))
+                if (currentDistance < minDistance)
                 {
-                    if (!map[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y)]) // right
-                    {
-                        roadsCosts[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y)] = firstNodeCost; // right
-                        unvisitedNodes.Enqueue(new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y)); // right
-                        map[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y)] = true;
-                    }
-                    else if (roadsCosts[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y)] > firstNodeCost)
-                        roadsCosts[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y)] = firstNodeCost;
-                }
-
-                if (map.ContainsKey(new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y + 1)))
-                {
-                    if (!map[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y + 1)])
-                    {
-                        roadsCosts[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y + 1)] = firstNodeCost; // bot-right
-                        unvisitedNodes.Enqueue(new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y + 1)); // bot-right 
-                        map[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y + 1)] = true;
-                    }
-                    else if (roadsCosts[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y + 1)] > firstNodeCost)
-                        roadsCosts[new Position(firstNode.Uniq_X + 1, firstNode.Uniq_Y + 1)] = firstNodeCost;
-                }
-                if (map.ContainsKey(new Position(firstNode.Uniq_X, firstNode.Uniq_Y + 1)))
-                {
-                    if (!map[new Position(firstNode.Uniq_X, firstNode.Uniq_Y + 1)])
-                    {
-                        roadsCosts[new Position(firstNode.Uniq_X, firstNode.Uniq_Y + 1)] = firstNodeCost; // bot
-                        unvisitedNodes.Enqueue(new Position(firstNode.Uniq_X, firstNode.Uniq_Y + 1)); // bot
-                        map[new Position(firstNode.Uniq_X, firstNode.Uniq_Y + 1)] = true;
-                    }
-                    else if (roadsCosts[new Position(firstNode.Uniq_X, firstNode.Uniq_Y + 1)] > firstNodeCost)
-                        roadsCosts[new Position(firstNode.Uniq_X, firstNode.Uniq_Y + 1)] = firstNodeCost;
-                }
-
-                if (map.ContainsKey(new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y + 1)))
-                {
-                    if (!map[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y + 1)])
-                    {
-                        roadsCosts[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y + 1)] = firstNodeCost; // bot-left
-                        unvisitedNodes.Enqueue(new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y + 1)); // bot-left
-                        map[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y + 1)] = true;
-                    }
-                    else if (roadsCosts[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y + 1)] > firstNodeCost)
-                        roadsCosts[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y + 1)] = firstNodeCost;
-                }
-
-                if (map.ContainsKey(new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y)))
-                {
-                    if (!map[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y)])
-                    {
-                        roadsCosts[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y)] = firstNodeCost; // left
-                        unvisitedNodes.Enqueue(new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y)); // left
-                        map[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y)] = true;
-                    }
-                    else if (roadsCosts[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y)] > firstNodeCost)
-                        roadsCosts[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y)] = firstNodeCost;
-                }
-
-                if (map.ContainsKey(new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y - 1)))
-                {
-                    if (!map[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y - 1)])
-                    {
-                        roadsCosts[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y - 1)] = firstNodeCost; // top-left
-                        unvisitedNodes.Enqueue(new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y - 1)); // top-left
-                        map[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y - 1)] = true;
-                    }
-                    else if (roadsCosts[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y - 1)] > firstNodeCost)
-                        roadsCosts[new Position(firstNode.Uniq_X - 1, firstNode.Uniq_Y - 1)] = firstNodeCost;
+                    nearestPoint = currentDirection;
+                    minDistance = currentDistance;
                 }
             }
+
+            // top-right
+            if ((currentPosition.Uniq_X + 1 >= 0 && currentPosition.Uniq_X + 1 < Console.WindowWidth &&
+                currentPosition.Uniq_Y - 1 >= 0 && currentPosition.Uniq_Y - 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y - 1) &&
+                !ContainsMove(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y - 1) &&
+                !ContainsObstacle(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y - 1)) ||
+                new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y - 1) == enemy)
+            {
+                currentDirection = new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y - 1);
+
+                if (enemy == currentDirection)
+                    return;
+
+                currentDistance = enemy.DistanceBetween(currentDirection);
+
+                if (currentDistance < minDistance)
+                {
+                    nearestPoint = currentDirection;
+                    minDistance = currentDistance;
+                }
+            }
+            // right
+            if ((currentPosition.Uniq_X + 1 >= 0 && currentPosition.Uniq_X + 1 < Console.WindowWidth &&
+                currentPosition.Uniq_Y >= 0 && currentPosition.Uniq_Y < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y) &&
+                !ContainsMove(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y) &&
+                !ContainsObstacle(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y)) ||
+                new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y) == enemy)
+            {
+                currentDirection = new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y);
+
+                if (enemy == currentDirection)
+                    return;
+
+                currentDistance = enemy.DistanceBetween(currentDirection);
+
+                if (currentDistance < minDistance)
+                {
+                    nearestPoint = currentDirection;
+                    minDistance = currentDistance;
+                }
+            }
+            // bot-right
+            if ((currentPosition.Uniq_X + 1 >= 0 && currentPosition.Uniq_X + 1 < Console.WindowWidth &&
+                currentPosition.Uniq_Y + 1 >= 0 && currentPosition.Uniq_Y + 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y + 1) &&
+                !ContainsMove(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y + 1) &&
+                !ContainsObstacle(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y + 1)) ||
+                new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y + 1) == enemy)
+            {
+                currentDirection = new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y + 1);
+
+
+                if (enemy == currentDirection)
+                    return;
+
+                currentDistance = enemy.DistanceBetween(currentDirection);
+
+                if (currentDistance < minDistance)
+                {
+                    nearestPoint = currentDirection;
+                    minDistance = currentDistance;
+                }
+            }
+            // bot
+            if ((currentPosition.Uniq_X >= 0 && currentPosition.Uniq_X < Console.WindowWidth &&
+                currentPosition.Uniq_Y + 1 >= 0 && currentPosition.Uniq_Y + 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.Uniq_X, currentPosition.Uniq_Y + 1) &&
+                !ContainsMove(currentPosition.Uniq_X, currentPosition.Uniq_Y + 1) &&
+                !ContainsObstacle(currentPosition.Uniq_X, currentPosition.Uniq_Y + 1)) ||
+                new Position(currentPosition.Uniq_X, currentPosition.Uniq_Y + 1) == enemy)
+            {
+                currentDirection = new Position(currentPosition.Uniq_X, currentPosition.Uniq_Y + 1);
+
+                if (enemy == currentDirection)
+                    return;
+
+                currentDistance = enemy.DistanceBetween(currentDirection);
+
+                if (currentDistance < minDistance)
+                {
+                    nearestPoint = currentDirection;
+                    minDistance = currentDistance;
+                }
+            }
+            // bot-left
+            if ((currentPosition.Uniq_X - 1 >= 0 && currentPosition.Uniq_X - 1 < Console.WindowWidth &&
+                currentPosition.Uniq_Y + 1 >= 0 && currentPosition.Uniq_Y + 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y + 1) &&
+                !ContainsMove(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y + 1) &&
+                !ContainsObstacle(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y + 1)) ||
+                new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y + 1) == enemy)
+            {
+                currentDirection =  new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y + 1);
+
+
+                if (enemy == currentDirection)
+                    return;
+
+                currentDistance = enemy.DistanceBetween(currentDirection);
+
+                if (currentDistance < minDistance)
+                {
+                    nearestPoint = currentDirection;
+                    minDistance = currentDistance;
+                }
+            }
+            // left
+            if ((currentPosition.Uniq_X - 1 >= 0 && currentPosition.Uniq_X - 1 < Console.WindowWidth &&
+                currentPosition.Uniq_Y >= 0 && currentPosition.Uniq_Y < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y) &&
+                !ContainsObstacle(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y) &&
+                !ContainsMove(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y)) ||
+                new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y) == enemy)
+            {
+                currentDirection = new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y);
+
+
+                if (enemy == currentDirection)
+                    return;
+
+                currentDistance = enemy.DistanceBetween(currentDirection);
+
+                if (currentDistance < minDistance)
+                {
+                    nearestPoint = currentDirection;
+                    minDistance = currentDistance;
+                }
+            }
+
+            // top-left
+            if ((currentPosition.Uniq_X - 1 >= 0 && currentPosition.Uniq_X - 1 < Console.WindowWidth &&
+                currentPosition.Uniq_Y - 1 >= 0 && currentPosition.Uniq_Y - 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y - 1) &&
+                !ContainsObstacle(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y - 1) &&
+                !ContainsMove(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y - 1)) ||
+                new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y - 1) == enemy)
+            {
+                currentDirection = new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y - 1);
+
+                if (enemy == currentDirection)
+                    return;
+
+                currentDistance = enemy.DistanceBetween(currentDirection);
+
+                if (currentDistance < minDistance)
+                {
+                    nearestPoint = currentDirection;
+                    minDistance = currentDistance;
+                }
+            }
+            
+            moveCommands.Add(nearestPoint);
+            FindBfsPath(enemy, nearestPoint);
         }
 
         private int GetBattlefieldIndex(int x, int y)
@@ -238,7 +281,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                     return i + 1;
             }
 
-            throw new ArgumentNullException("Searching for the battlefield index there was none found");
+            throw new ArgumentNullException("While searching for the battlefield index there was none found");
         }
 
         private void SetHellionRoad()
@@ -251,6 +294,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
              * 
              * TODO WHEN THE HELLION is not moving, but the target moves, the hellion must move immediately
             */
+
             if (this.Target == null)
                 return;
 
@@ -259,61 +303,84 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             int indexTargetPosition = GetBattlefieldIndex(targetPosition.Uniq_X, targetPosition.Uniq_Y);
             int hellionIndexTargetPosition = indexTargetPosition;
             var hellionTargetPosition = targetPosition;
+            ClearPathData();
+            FindBfsPath(new Position(this.Target.Uniq_X, this.Target.Uniq_Y), new Position(this.Uniq_X, this.Uniq_Y));
+            int fromIndex = indexTargetPosition;
+            int toIndex = internal_Variables.Battleground.Count - 1;
             
             /* for m_MoveRate the hellion travels from one block to another. Hence, the time it will take for it to travel the whole
-             * distance will be roadCosts[targetPosition] (the sum of blocks it will transit through) 
+             * distance will be roadCosts[targetPosition] (the sum of all blocks it will transit through) 
              * -1 because we want to go the the adjacent block not the block from which the target will move
              */
 
-            float hellionTakenTime = m_MoveRate * (roadsCosts[hellionTargetPosition]);
-            // roadCosts[hellionTargetPosition] - 1 = hellionTakenTime / m_MoveRate
+            // find the shortest path to the target with BFS
+
+            float hellionTakenTime = m_MoveRate * moveCommands.Count;
+            // bfsCommands.Count = hellionTakenTime / m_MoveRate
 
             // this is the target calculated distance taken for the time the hellion moves
             int blocksCircled = (int)Math.Floor(hellionTakenTime / this.Target.MoveRate);
-            
-            while(((blocksCircled + indexTargetPosition > hellionIndexTargetPosition - 3)|| (blocksCircled + indexTargetPosition > hellionIndexTargetPosition - 2)||
-               (blocksCircled + indexTargetPosition > hellionIndexTargetPosition - 1)  || (blocksCircled + indexTargetPosition > hellionIndexTargetPosition)) &&
-                hellionIndexTargetPosition+ 1 < internal_Variables.Battleground.Count)
-            {
-                hellionIndexTargetPosition++;
-                hellionTargetPosition = internal_Variables.Battleground[hellionIndexTargetPosition];
+            var currentTime = DateTime.Now;
 
-                hellionTakenTime = m_MoveRate * (roadsCosts[hellionTargetPosition]);
+            List<double> timeTaken = new List<double>();
+
+            while (this.Target != null && Target.GetHealthStatus() > 0)
+            {
+                hellionIndexTargetPosition = (fromIndex + toIndex) / 2;
+                hellionTargetPosition = internal_Variables.Battleground[hellionIndexTargetPosition];
+                var takenTime = (DateTime.Now - currentTime).TotalSeconds;
+                timeTaken.Add(takenTime);
+
+                ClearPathData();
+                FindBfsPath(new Position(hellionTargetPosition.Uniq_X, hellionTargetPosition.Uniq_Y), 
+                    new Position(this.Uniq_X, this.Uniq_Y));
 
                 blocksCircled = (int)Math.Floor(hellionTakenTime / this.Target.MoveRate);
+                hellionTakenTime = m_MoveRate * moveCommands.Count;
+
+                if (fromIndex == hellionIndexTargetPosition || toIndex == hellionIndexTargetPosition)
+                    break;
+
+                if (((blocksCircled + indexTargetPosition > hellionIndexTargetPosition - 3) ||
+                    (blocksCircled + indexTargetPosition > hellionIndexTargetPosition - 2) ||
+                    (blocksCircled + indexTargetPosition > hellionIndexTargetPosition - 1) ||
+                    (blocksCircled + indexTargetPosition > hellionIndexTargetPosition)) &&
+                    hellionIndexTargetPosition + 1 < internal_Variables.Battleground.Count)
+                    fromIndex = hellionIndexTargetPosition;
+
+                else if (hellionIndexTargetPosition + 1 < internal_Variables.Battleground.Count)
+                    toIndex = hellionIndexTargetPosition;
+
+                else
+                    break;
             }
-            
+
             /* if the hellionIndexTargetPosition == internal_Variables.BattleGround.Count 
              * then the target should find a new target, if the new target emerges with the same problem, then should traverse all targets
              * before this one if all give the equivalent situation, then the hellion is useless and it should be done something to it
              */
-
-            if(hellionIndexTargetPosition == internal_Variables.Battleground.Count)
+            if (hellionIndexTargetPosition == internal_Variables.Battleground.Count)
             {
                 FindTarget();
                 SetHellionRoad();
                 return;
             }
 
-            hellionTargetPosition = internal_Variables.Battleground[hellionIndexTargetPosition];
-            ExhibitRoadTaken(hellionTargetPosition);
-            hellionTargetPosition = moveCommands[0];
-
             /* take the last position of the road
              * when the target moves, try to move with it, if there is a adjacent obstacle to the hellion, a new road must be planned
              */
         }
 
-        private int FindMinElement(List<int> list)
+        private int FindMinElementIndex<T>(List<T> list) where T :System.IComparable<T>
         {
-            int curMin = list[0];
+            T curMin = list[0];
             int minIndex = 0;
 
             for(int i = 0; i < list.Count; i++)
             {
-                int curElement = list[i];
+                T curElement = list[i];
 
-                if (curMin > curElement)
+                if (curMin.CompareTo(curElement) > 0)
                 {
                     curMin = curElement;
                     minIndex = i;
@@ -323,73 +390,15 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             return minIndex;
         }
 
-        private void ExhibitRoadTaken(Position endPosition)
+        private bool ContainsMove(int x, int y)
         {
-            Position curPosition = endPosition;
-            Position hellionPosition = new Position(Uniq_X, Uniq_Y);
-            List<int> surroundingCosts = new List<int>();
-            List<Position> surroundingPositions = new List<Position>();
-            int surroundingPositionsCount = 0;
-
-            while(curPosition != hellionPosition)
+            foreach(var move in this.moveCommands)
             {
-                surroundingCosts.Clear();
-                surroundingPositions.Clear();
-                surroundingPositionsCount = 0;
-
-                if (map.ContainsKey(new Position(curPosition.Uniq_X, curPosition.Uniq_Y - 1)))
-                {
-                    surroundingPositions.Add(new Position(curPosition.Uniq_X, curPosition.Uniq_Y - 1)); // top
-                    surroundingPositionsCount++;
-                    surroundingCosts.Add(roadsCosts[surroundingPositions[surroundingPositionsCount-1]]);
-
-                }
-                if (map.ContainsKey(new Position(curPosition.Uniq_X + 1, curPosition.Uniq_Y - 1)))
-                {
-                    surroundingPositions.Add(new Position(curPosition.Uniq_X + 1, curPosition.Uniq_Y - 1)); // top-right
-                    surroundingPositionsCount++;
-                    surroundingCosts.Add(roadsCosts[surroundingPositions[surroundingPositionsCount - 1]]);
-                }
-                if (map.ContainsKey(new Position(curPosition.Uniq_X + 1, curPosition.Uniq_Y)))
-                {
-                    surroundingPositions.Add(new Position(curPosition.Uniq_X + 1, curPosition.Uniq_Y)); // right
-                    surroundingPositionsCount++;
-                    surroundingCosts.Add(roadsCosts[surroundingPositions[surroundingPositionsCount - 1]]);
-                }
-                if (map.ContainsKey(new Position(curPosition.Uniq_X + 1, curPosition.Uniq_Y + 1)))
-                {
-                    surroundingPositions.Add(new Position(curPosition.Uniq_X + 1, curPosition.Uniq_Y + 1)); // bot-right
-                    surroundingPositionsCount++;
-                    surroundingCosts.Add(roadsCosts[surroundingPositions[surroundingPositionsCount - 1]]);
-                }
-                if (map.ContainsKey(new Position(curPosition.Uniq_X, curPosition.Uniq_Y + 1)))
-                {
-                    surroundingPositions.Add(new Position(curPosition.Uniq_X, curPosition.Uniq_Y + 1)); // bot
-                    surroundingPositionsCount++;
-                    surroundingCosts.Add(roadsCosts[surroundingPositions[surroundingPositionsCount - 1]]);
-                }
-                if (map.ContainsKey(new Position(curPosition.Uniq_X - 1, curPosition.Uniq_Y + 1)))
-                {
-                    surroundingPositions.Add(new Position(curPosition.Uniq_X - 1, curPosition.Uniq_Y + 1)); // bot-left
-                    surroundingPositionsCount++;
-                    surroundingCosts.Add(roadsCosts[surroundingPositions[surroundingPositionsCount - 1]]);
-                }
-                if (map.ContainsKey(new Position(curPosition.Uniq_X - 1, curPosition.Uniq_Y)))
-                {
-                    surroundingPositions.Add(new Position(curPosition.Uniq_X - 1, curPosition.Uniq_Y)); // left
-                    surroundingPositionsCount++;
-                    surroundingCosts.Add(roadsCosts[surroundingPositions[surroundingPositionsCount - 1]]);
-                }
-                if (map.ContainsKey(new Position(curPosition.Uniq_X - 1, curPosition.Uniq_Y - 1)))
-                {
-                    surroundingPositions.Add(new Position(curPosition.Uniq_X - 1, curPosition.Uniq_Y - 1)); // top-left
-                    surroundingPositionsCount++;
-                    surroundingCosts.Add(roadsCosts[surroundingPositions[surroundingPositionsCount - 1]]);
-                }
-
-                curPosition = surroundingPositions[FindMinElement(surroundingCosts)];
-                moveCommands.Add(curPosition);
+                if (move.Uniq_X == x && move.Uniq_Y == y)
+                    return true;
             }
+
+            return false;
         }
 
         private bool ContainsTurret(int x, int y)
@@ -425,35 +434,31 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
         private void ClearPathData()
         {
-            roadsCosts.Clear();
-            map.Clear();
-            unvisitedNodes.Clear();
             moveCommands.Clear();
-            currentCommand = 0;
+            currentCommands = 0;
         }
 
         public void Move()
         {
             DateTime currentTime = DateTime.Now;
 
-            if (moveCommands.Count - currentCommand - 1 == 0)
+            if (moveCommands.Count == currentCommands || moveCommands.Count == 0)
             {
                 // clear the path
                 ClearPathData();
-                InitialShortPath();
 
                 if (this.Target == null || (this.Target != null && this.Target.GetHealthStatus() <= 0))
                 {
                     this.Target = null;
                     FindTarget();
                 }
-
-                FindShortestPath();
+                
                 SetHellionRoad();
                 return;
             }
 
-            if ((currentTime - m_timeDeparture).Seconds < m_MoveRate || moveCommands.Count -currentCommand-1 == 0)
+            if ((currentTime - m_timeDeparture).Seconds < m_MoveRate || moveCommands.Count == currentCommands
+                || moveCommands.Count == 0)
                 return;
 
             m_timeDeparture = currentTime;
@@ -465,22 +470,21 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
                 if (this.Target != null && this.Target.GetHealthStatus() <= 0)
                     this.Target = null;
-
-                InitialShortPath();
-                FindShortestPath();
+                
                 this.FindTarget();
                 SetHellionRoad();
                 return;
             }
             Console.SetCursorPosition(this.Uniq_X, this.Uniq_Y);
             Console.Write(" ");
-            currentCommand++;
+            
+            Uniq_X = moveCommands[currentCommands].Uniq_X;
+            Uniq_Y = moveCommands[currentCommands].Uniq_Y;
 
-            Uniq_X = moveCommands[moveCommands.Count - 1 - currentCommand].Uniq_X;
-            Uniq_Y = moveCommands[moveCommands.Count - 1 - currentCommand].Uniq_Y;
+            currentCommands++;
 
             // check if the new position does not overlap with a turret
-            
+
             Console.SetCursorPosition(this.Uniq_X, this.Uniq_Y);
             Console.Write("&");
         }
