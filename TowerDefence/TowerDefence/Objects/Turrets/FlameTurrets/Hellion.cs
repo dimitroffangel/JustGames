@@ -303,8 +303,6 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             int indexTargetPosition = GetBattlefieldIndex(targetPosition.Uniq_X, targetPosition.Uniq_Y);
             int hellionIndexTargetPosition = indexTargetPosition;
             var hellionTargetPosition = targetPosition;
-            ClearPathData();
-            FindBfsPath(new Position(this.Target.Uniq_X, this.Target.Uniq_Y), new Position(this.Uniq_X, this.Uniq_Y));
             int fromIndex = indexTargetPosition;
             int toIndex = internal_Variables.Battleground.Count - 1;
             
@@ -324,8 +322,11 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
             List<double> timeTaken = new List<double>();
 
-            while (this.Target != null && Target.GetHealthStatus() > 0)
+            while (true)
             {
+                if (this.Target == null || this.Target.GetHealthStatus() <= 0)
+                    return;
+
                 hellionIndexTargetPosition = (fromIndex + toIndex) / 2;
                 hellionTargetPosition = internal_Variables.Battleground[hellionIndexTargetPosition];
                 var takenTime = (DateTime.Now - currentTime).TotalSeconds;
@@ -335,9 +336,9 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 FindBfsPath(new Position(hellionTargetPosition.Uniq_X, hellionTargetPosition.Uniq_Y), 
                     new Position(this.Uniq_X, this.Uniq_Y));
 
-                blocksCircled = (int)Math.Floor(hellionTakenTime / this.Target.MoveRate);
                 hellionTakenTime = m_MoveRate * moveCommands.Count;
-
+                blocksCircled = (int)Math.Floor(hellionTakenTime / this.Target.MoveRate);
+                
                 if (fromIndex == hellionIndexTargetPosition || toIndex == hellionIndexTargetPosition)
                     break;
 

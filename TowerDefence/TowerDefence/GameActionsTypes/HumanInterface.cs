@@ -124,6 +124,10 @@ namespace TowerDefence
                     else if (Variables.PlayerView == '>')
                         newTurretX++;
 
+                    if (newTurretX < 0 || newTurretX >= Console.WindowWidth ||
+                        newTurretY < 0 || newTurretY >= Console.WindowHeight)
+                        return;
+
                     TurretPlacement placeOn = DeterminePlayerPosition();
 
                     if (this.Variables.PocketMoney >= 50 && userInput.Key == ConsoleKey.P)
