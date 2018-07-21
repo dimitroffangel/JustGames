@@ -19,5 +19,10 @@ namespace TowerDefence.Objects.Enemies
             this.MoveRate = 0.5f;
             this.InitialMoveRate = this.MoveRate;
         }
+
+        protected override void Foo()
+        {
+            
+        }
     }
 }

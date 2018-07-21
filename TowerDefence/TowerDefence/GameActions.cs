@@ -12,7 +12,7 @@ namespace TowerDefence
         public GameActions(ref SetUpVariables variables)
             : base(ref variables)
         {
-            this.Variables = variables;
+
         }
 
         private void PlayGame()
@@ -21,8 +21,8 @@ namespace TowerDefence
 
             var startTime = DateTime.Now;
 
-           while (!this.Variables.IsGameOver && 
-                (this.Variables.EnemiesCurrentlyKilled + this.Variables.EnemiesCurrentlyMissed != this.Variables.EnemiesInitially))
+           while (!internal_Variables.IsGameOver && 
+                (internal_Variables.EnemiesCurrentlyKilled + internal_Variables.EnemiesCurrentlyMissed != internal_Variables.EnemiesInitially))
             {
                 Thread.Sleep(100);
 
@@ -44,31 +44,31 @@ namespace TowerDefence
                 InitiateGrenades();
             }
 
-            this.Variables.EnemiesKilled += this.Variables.EnemiesCurrentlyKilled;
-            this.Variables.EnemiesMissed += this.Variables.EnemiesCurrentlyMissed;
+            internal_Variables.EnemiesKilled += internal_Variables.EnemiesCurrentlyKilled;
+            internal_Variables.EnemiesMissed += internal_Variables.EnemiesCurrentlyMissed;
             Console.Clear();
 
-            if (this.Variables.EnemiesCount == 0)
+            if (internal_Variables.EnemiesCount == 0)
             {
                 Console.WriteLine("Game ended");
 
-                if (++this.Variables.CurrentLevel > this.Variables.Highest_Level_Reached)
-                    this.Variables.Highest_Level_Reached++;
+                if (++internal_Variables.CurrentLevel > internal_Variables.Highest_Level_Reached)
+                    internal_Variables.Highest_Level_Reached++;
 
-                this.Variables.IsGameOver = true;
-                this.Variables.EnemiesCurrentlyKilled = 0;
-                this.Variables.EnemiesCurrentlyMissed = 0;
+                internal_Variables.IsGameOver = true;
+                internal_Variables.EnemiesCurrentlyKilled = 0;
+                internal_Variables.EnemiesCurrentlyMissed = 0;
 
                 // clear all data
-                this.Variables.EnemyPositions.Clear();
-                this.Variables.TurretsPosition.Clear();
-                this.Variables.ObstaclePositions.Clear();
-                this.Variables.Hellions.Clear();
-                this.Variables.FireTrappers.Clear();
-                this.Variables.SlowedEnemies.Clear();
-                this.Variables.BleedingEnemies.Clear();
-                this.Variables.Grenades.Clear();
-                this.Variables.Battleground.Clear();
+                internal_Variables.EnemyPositions.Clear();
+                internal_Variables.TurretsPosition.Clear();
+                internal_Variables.ObstaclePositions.Clear();
+                internal_Variables.Hellions.Clear();
+                internal_Variables.FireTrappers.Clear();
+                internal_Variables.SlowedEnemies.Clear();
+                internal_Variables.BleedingEnemies.Clear();
+                internal_Variables.Grenades.Clear();
+                internal_Variables.Battleground.Clear();
             }
 
             else // remake the end game statements 
@@ -79,21 +79,21 @@ namespace TowerDefence
 
         private void ExtendTraps()
         {
-            for (int i = 0; i <this.Variables.FireTrappers.Count; i++)
-                this.Variables.FireTrappers[i].TryExtendingExplosion();
+            for (int i = 0; i <internal_Variables.FireTrappers.Count; i++)
+                internal_Variables.FireTrappers[i].TryExtendingExplosion();
         }
 
         private void MoveHellions()
         {
-            foreach (var hellion in this.Variables.Hellions)
+            foreach (var hellion in internal_Variables.Hellions)
                 hellion.Move();
         }
 
         private void CheckSlowedEnemies()
         {
-            for (int i = 0; i < this.Variables.SlowedEnemies.Count; i++)
+            for (int i = 0; i < internal_Variables.SlowedEnemies.Count; i++)
             {
-                var curEnemy = this.Variables.SlowedEnemies[i];
+                var curEnemy = internal_Variables.SlowedEnemies[i];
 
                 // if the duration is lower than the time passed since the slow was incarnated
                 if ((DateTime.Now - curEnemy.SlowedTime).Seconds >= curEnemy.SlowedDuration)
@@ -103,7 +103,7 @@ namespace TowerDefence
                     curEnemy.MoveRate = curEnemy.InitialMoveRate;
                     // so the slow time even in the future you check whether there is a slow time to not throw the code in to complete disarray
                     curEnemy.SlowedTime = default(DateTime); 
-                    this.Variables.SlowedEnemies.Remove(curEnemy);
+                    internal_Variables.SlowedEnemies.Remove(curEnemy);
                     i--;
                 }
 
@@ -135,15 +135,15 @@ namespace TowerDefence
             
             if(input == 1) // New Game
             {
-                LevelSetup level = new LevelSetup(1, ref this.Variables, 1000);
-                this.Variables.CurrentLevel = 1;
+                LevelSetup level = new LevelSetup(1, ref internal_Variables, 1000);
+                internal_Variables.CurrentLevel = 1;
                 PlayGame();
             }
 
             else if(input == 2) // Continue
             { 
-                LevelSetup level = new LevelSetup(2, ref this.Variables, 150);
-                this.Variables.CurrentLevel = 2;
+                LevelSetup level = new LevelSetup(2, ref internal_Variables, 150);
+                internal_Variables.CurrentLevel = 2;
                 PlayGame();
             }
             
@@ -182,7 +182,7 @@ namespace TowerDefence
                         stringishMoney.Append(character);
                 }
 
-                this.Variables.Total_Earned_Money = int.Parse(stringishMoney.ToString());
+                internal_Variables.Total_Earned_Money = int.Parse(stringishMoney.ToString());
 
                 reader.Close();
                 Console.WriteLine("\n Press any key to get back in the non-fantasy world");
@@ -192,22 +192,22 @@ namespace TowerDefence
             {
                 StreamWriter write = new StreamWriter(configDirectory, false);
 
-                write.WriteLine("Current_Money: \" {0} \" ", this.Variables.PocketMoney);
-                write.WriteLine("Total_Money: \" {0} \" ", this.Variables.PocketMoney + this.Variables.Total_Earned_Money);
-                write.WriteLine("Total_Enemies_Killed: \" {0} \" ", this.Variables.EnemiesKilled);
-                write.WriteLine("Total_Enemies_Missed: \" {0} \" ", this.Variables.EnemiesMissed);
-                write.WriteLine("Total_Turrets_Lost: \" {0} \" ", this.Variables.TurretsLost);
-                write.WriteLine("Total_Ammo_Used: \" {0} \" ", this.Variables.AmmoLost);
-                write.WriteLine("Total_Rocks_Felt_On_Turret: \" {0} \" ", this.Variables.Rocks_Felt_On_Turret);
-                write.WriteLine("Total_Rocks_Felt_On_You: \" {0} \" ", this.Variables.Rocks_Felt_On_You);
-                write.WriteLine("Highest_Level_Reached: \" {0} \" ", this.Variables.Highest_Level_Reached);
+                write.WriteLine("Current_Money: \" {0} \" ", internal_Variables.PocketMoney);
+                write.WriteLine("Total_Money: \" {0} \" ", internal_Variables.PocketMoney + internal_Variables.Total_Earned_Money);
+                write.WriteLine("Total_Enemies_Killed: \" {0} \" ", internal_Variables.EnemiesKilled);
+                write.WriteLine("Total_Enemies_Missed: \" {0} \" ", internal_Variables.EnemiesMissed);
+                write.WriteLine("Total_Turrets_Lost: \" {0} \" ", internal_Variables.TurretsLost);
+                write.WriteLine("Total_Ammo_Used: \" {0} \" ", internal_Variables.AmmoLost);
+                write.WriteLine("Total_Rocks_Felt_On_Turret: \" {0} \" ", internal_Variables.Rocks_Felt_On_Turret);
+                write.WriteLine("Total_Rocks_Felt_On_You: \" {0} \" ", internal_Variables.Rocks_Felt_On_You);
+                write.WriteLine("Highest_Level_Reached: \" {0} \" ", internal_Variables.Highest_Level_Reached);
 
                 write.Close();
                 Environment.Exit(0);
                 return;
             }
             
-            this.LoadStartingMenu();
+            LoadStartingMenu();
         }
       
         public void SetTheMode()
@@ -215,49 +215,49 @@ namespace TowerDefence
             Console.BufferWidth = Console.WindowWidth;
             Console.BufferHeight = Console.WindowHeight;
 
-            Console.SetCursorPosition(this.Variables.PlayerCol, this.Variables.PlayerRow);
+            Console.SetCursorPosition(internal_Variables.PlayerCol, internal_Variables.PlayerRow);
         }
 
         public void DrawUI()
         {
             Console.SetCursorPosition(Console.WindowWidth - 60, 0);
             Console.Write("Money: {0}, Enemies Killed: {1} Enemies Broken through: {2}"
-                ,this.Variables.PocketMoney, this.Variables.EnemiesCurrentlyKilled, this.Variables.EnemiesCurrentlyMissed);
+                ,internal_Variables.PocketMoney, internal_Variables.EnemiesCurrentlyKilled, internal_Variables.EnemiesCurrentlyMissed);
         }
 
         public void InitiateBleedingsEffect()
         {
-            foreach (var bleeding in this.Variables.BleedingEnemies)
+            foreach (var bleeding in internal_Variables.BleedingEnemies)
                 bleeding.ActivateEffect();
         }
 
         public void InitiateGrenades()
         {
-            foreach (var grenades in this.Variables.Grenades)
+            foreach (var grenades in internal_Variables.Grenades)
                 grenades.TryExploding();
         }
 
         public void TurretLogic()
         {
-            for (int i = 0; i < this.Variables.TurretsPosition.Count; i++)
+            for (int i = 0; i < internal_Variables.TurretsPosition.Count; i++)
             {
-                var turret = this.Variables.TurretsPosition[i];
+                var turret = internal_Variables.TurretsPosition[i];
                 turret.TryFiring();
 
                 if (turret.Ammo <= 0)
                 {
                     // draw the animation
-                    Console.SetCursorPosition(turret.Uniq_X, turret.Uniq_Y);
+                    Console.SetCursorPosition(turret.X, turret.Y);
 
                     if(turret.m_Type == TurretType.FireBunker_Hellion)
                     {
-                        this.Variables.Hellions.Remove((Hellion)turret);
+                        internal_Variables.Hellions.Remove((Hellion)turret);
                     }
 
                     Console.Write(" ");
 
                     // remove the reference to the object so that he can be handled by the garbage collector
-                    this.Variables.TurretsPosition.Remove(turret);
+                    internal_Variables.TurretsPosition.Remove(turret);
                     i--;
                 }
             }

@@ -52,7 +52,7 @@ namespace TowerDefence.Objects
                 var enemy = internal_Variables.EnemyPositions[i];
 
                 // the big damage
-                if (this.Uniq_X == enemy.Uniq_X && this.Uniq_Y == enemy.Uniq_Y)
+                if (this.X == enemy.X && this.Y == enemy.Y)
                 {
                     enemy.TakeDamage(m_Damage);
                     if (enemy.GetHealthStatus() <= 0)
@@ -66,10 +66,10 @@ namespace TowerDefence.Objects
                     }
                 }
                 // side damage
-                if ((this.Uniq_X == enemy.Uniq_X && this.Uniq_Y + 1 == enemy.Uniq_Y) ||
-                    (this.Uniq_X == enemy.Uniq_X && this.Uniq_Y - 1 == enemy.Uniq_Y) ||
-                    (this.Uniq_X + 1 == enemy.Uniq_X && this.Uniq_Y == enemy.Uniq_Y) ||
-                    (this.Uniq_X - 1 == enemy.Uniq_X && this.Uniq_Y == enemy.Uniq_Y))
+                if ((this.X == enemy.X && this.Y + 1 == enemy.Y) ||
+                    (this.X == enemy.X && this.Y - 1 == enemy.Y) ||
+                    (this.X + 1 == enemy.X && this.Y == enemy.Y) ||
+                    (this.X - 1 == enemy.X && this.Y == enemy.Y))
                 {
                     enemy.TakeDamage(m_SideDamage);
 

@@ -74,7 +74,7 @@ namespace TowerDefence
         {
             foreach (var enemy in this.EnemyPositions)
             {
-                if (enemy.Uniq_X == x && enemy.Uniq_Y == y)
+                if (enemy.X == x && enemy.Y == y)
                     return true;
             }
 
@@ -85,7 +85,7 @@ namespace TowerDefence
         {
             foreach (var enemy in this.EnemyPositions)
             {
-                if (enemy.Uniq_X == x && enemy.Uniq_Y == y)
+                if (enemy.X == x && enemy.Y == y)
                     return enemy;
             }
 

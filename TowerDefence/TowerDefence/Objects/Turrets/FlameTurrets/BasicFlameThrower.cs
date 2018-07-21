@@ -4,7 +4,8 @@
     {
 
         public BasicFlameThrower(int x, int y, TurretType turretType, 
-            TurretPlacement placement, ref SetUpVariables variables) : base(x, y, turretType, placement, ref variables)
+            TurretPlacement placement, ref SetUpVariables variables) 
+            : base(x, y, turretType, placement, ref variables)
         {
 
         }

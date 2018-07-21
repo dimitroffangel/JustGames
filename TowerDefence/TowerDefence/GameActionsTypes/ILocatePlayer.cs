@@ -10,10 +10,10 @@
 
         private bool IsPlayerNearBattlefield(int additionX, int additionY)
         {
-            foreach(var position in this.Variables.Battleground)
+            foreach(var position in internal_Variables.Battleground)
             {
-                if (position.Uniq_X - additionX == this.Variables.PlayerCol &&
-                    position.Uniq_Y - additionY == this.Variables.PlayerRow)
+                if (position.X - additionX == internal_Variables.PlayerCol &&
+                    position.Y - additionY == internal_Variables.PlayerRow)
                     return true;
             }
 
@@ -31,7 +31,8 @@
             else if (IsPlayerNearBattlefield(0, 2) || IsPlayerNearBattlefield(0, 3)) // from Up
                 return TurretPlacement.Top;
 
-            else if (IsPlayerNearBattlefield(0, -2) || IsPlayerNearBattlefield(0, -3) || IsPlayerNearBattlefield(0, -1)) // from down
+            else if (IsPlayerNearBattlefield(0, -2) || IsPlayerNearBattlefield(0, -3) || 
+                IsPlayerNearBattlefield(0, -1)) // from down
                 return TurretPlacement.Down;
 
             else

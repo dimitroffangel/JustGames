@@ -14,9 +14,9 @@ namespace TowerDefence.Objects
         private float m_InitialMoveRate;
         private float m_Health;
         private float m_SlowedDuration;
-        private DateTime slowedTime;
+        private DateTime m_SlowedTime;
         private List<Enum> m_BleedingEffects;
-        private List<Turret> targetedBy;
+        private List<Turret> m_TargetedBy;
 
         private SetUpVariables internal_Variables;
 
@@ -34,17 +34,18 @@ namespace TowerDefence.Objects
         }
 
         protected abstract void SetStats();
+        protected abstract void Foo();
 
         public void TakeDamage(float damage)
         {
-            this.m_Health -= damage;
+            m_Health -= damage;
         }
 
         public void TryKilling()
         {
-            if (this.m_Health <= 0)
+            if (m_Health <= 0)
             {
-                Console.SetCursorPosition(this.Uniq_X, this.Uniq_Y);
+                Console.SetCursorPosition(this.X, this.Y);
                 Console.Write(" ");
             }
         }
@@ -54,7 +55,16 @@ namespace TowerDefence.Objects
             return m_Health;
         }
 
-        public float MoveRate { get => m_MoveRate; set => m_MoveRate = value; }
+        public float MoveRate
+        {
+            get => m_MoveRate; set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException("MoveRate must be bigger than 0");
+
+                m_MoveRate = value;
+            }
+        }
         public float InitialMoveRate { get => m_InitialMoveRate; set => m_InitialMoveRate = value; }
         public DateTime TimeSinceLastMove { get => m_TimeSinceLastMove; set => m_TimeSinceLastMove = value; }
         internal SetUpVariables Variables { get => internal_Variables; set => internal_Variables = value; }
@@ -63,7 +73,7 @@ namespace TowerDefence.Objects
         public List<Enum> BleedingEffects { get => m_BleedingEffects; set => m_BleedingEffects = value; }
         internal EnemyState State { get => m_State; set => m_State = value; }
         public float SlowedDuration { get => m_SlowedDuration; set => m_SlowedDuration = value; }
-        public DateTime SlowedTime { get => slowedTime; set => slowedTime = value; }
-        internal List<Turret> TargetedBy { get => targetedBy; set => targetedBy = value; }
+        public DateTime SlowedTime { get => m_SlowedTime; set => m_SlowedTime = value; }
+        internal List<Turret> TargetedBy { get => m_TargetedBy; set => m_TargetedBy = value; }
     }
 }

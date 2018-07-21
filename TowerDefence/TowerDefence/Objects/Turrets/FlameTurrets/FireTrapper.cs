@@ -4,32 +4,29 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 {
     class FireTrapper : FlameThrower
     {
-        private const int extendTime = 1;
-        private DateTime currentExtendTime;
-        private const int extendLimit = 4;
-        private int currentExtensionCounter;
-        private bool isCopy;
-
-        private SetUpVariables internal_Variables;
-
+        private const int m_ExtendTime = 1;
+        private DateTime m_CurrentExtendTime;
+        private const int m_ExtendLimit = 4;
+        private int m_CurrentExtensionCounter;
+        private bool m_IsClone;
+        
         public FireTrapper(int x, int y, TurretType turretType, TurretPlacement placement, 
             ref SetUpVariables variables, bool isCopied) : base(x, y, turretType, placement, ref variables)
         {
-            this.CurrentExtendTime = DateTime.Now;
-            internal_Variables = variables;
-            currentExtensionCounter = 0;
-            isCopy = isCopied;
+            CurrentExtendTime = DateTime.Now;
+            m_CurrentExtensionCounter = 0;
+            m_IsClone = isCopied;
         }
 
         public void TryExtendingExplosion()
         {
-            if (isCopy || this.currentExtensionCounter >= extendLimit)
+            if (m_IsClone || m_CurrentExtensionCounter >= m_ExtendLimit)
                 return;
 
             // if the timer is up than extend with a field
             int trapBattleIndex = -1;
 
-            if((DateTime.Now - this.currentExtendTime).TotalSeconds >= extendTime)
+            if((DateTime.Now - m_CurrentExtendTime).TotalSeconds >= m_ExtendTime)
             {
                 // extend
                 // find the position index in the battlefield database
@@ -37,22 +34,23 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 {
                     var curPosition = internal_Variables.Battleground[i];
 
-                    if(curPosition.Uniq_X == Uniq_X && curPosition.Uniq_Y == Uniq_Y)
+                    if(curPosition.X == X && curPosition.Y == Y)
                     {
                         trapBattleIndex = i;
                         break;
                     }
                 }
 
-                var newTrapPosition = internal_Variables.Battleground[trapBattleIndex - (1 + this.currentExtensionCounter)];
-                var fireTrap = new FireTrapper(newTrapPosition.Uniq_X, newTrapPosition.Uniq_Y, 
+                var newTrapPosition = internal_Variables
+                    .Battleground[trapBattleIndex - (1 + m_CurrentExtensionCounter)];
+                var fireTrap = new FireTrapper(newTrapPosition.X, newTrapPosition.Y, 
                     TurretType.FireBunker_Trap, m_Placement, ref internal_Variables, true);
-                this.Variables.FireTrappers.Add(fireTrap);
-                Console.SetCursorPosition(newTrapPosition.Uniq_X, newTrapPosition.Uniq_Y);
+                internal_Variables.FireTrappers.Add(fireTrap);
+                Console.SetCursorPosition(newTrapPosition.X, newTrapPosition.Y);
                 Console.Write("&");
 
-                this.currentExtensionCounter++;
-                this.currentExtendTime = DateTime.Now;
+                m_CurrentExtensionCounter++;
+                m_CurrentExtendTime = DateTime.Now;
             }
         }
 
@@ -85,7 +83,6 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             }
         }
 
-        public DateTime CurrentExtendTime { get => currentExtendTime; set => currentExtendTime = value; }
-        internal SetUpVariables Internal_Variables { get => internal_Variables; set => internal_Variables = value; }
+        public DateTime CurrentExtendTime { get => m_CurrentExtendTime; set => m_CurrentExtendTime = value; }
     }
 }

@@ -18,8 +18,8 @@ namespace TowerDefence
         private int m_FireEffect;
         private DateTime m_LastTimeShot;
 
-        private SetUpVariables internal_Variables;
-        private Enemy m_target;
+        protected SetUpVariables internal_Variables;
+        private Enemy m_Target;
 
         public Turret(int x, int y, TurretType turretType, TurretPlacement placement,
             ref SetUpVariables variables) : base(x, y)
@@ -82,7 +82,7 @@ namespace TowerDefence
         {
             var curTime = DateTime.Now;
 
-            if ((curTime - this.LastTimeShot).TotalSeconds < m_FireRate)
+            if ((curTime - m_LastTimeShot).TotalSeconds < m_FireRate)
                 return;
 
             m_LastTimeShot = curTime;
@@ -115,7 +115,7 @@ namespace TowerDefence
                 foreach (var enemy in internal_Variables.EnemyPositions)
                 {
                     enemy.TakeDamage(1000);
-                    Console.SetCursorPosition(enemy.Uniq_X, enemy.Uniq_Y);
+                    Console.SetCursorPosition(enemy.X, enemy.Y);
                     Console.Write(" ");
                 }
 
@@ -127,8 +127,8 @@ namespace TowerDefence
 
         private void FireOn(int addition) // turret's position + these arguments
         {
-            int targetX = Uniq_X;
-            int targetY = Uniq_Y;
+            int targetX = X;
+            int targetY = Y;
 
             if (m_Placement == TurretPlacement.Top)
             {
@@ -153,8 +153,9 @@ namespace TowerDefence
                 targetY += addition;
             }
 
-            if(this.m_Type == TurretType.FireBunker_Demoman) // the demoman shot is different from the others shootings
-               this.internal_Variables.Grenades.Add(new Grenade(targetX, targetY, this.m_Damage, this.m_Damage / 4, ref this.internal_Variables));
+            if(m_Type == TurretType.FireBunker_Demoman) // the demoman shot is different from the others shootings
+               internal_Variables.Grenades
+                    .Add(new Grenade(targetX, targetY, m_Damage, m_Damage / 4, ref internal_Variables));
 
             if (IsShotOnEnemy(targetX, targetY))
             {
@@ -173,29 +174,29 @@ namespace TowerDefence
                 if(enemy.GetHealthStatus() <= 0)
                     return false;
 
-                if (TurretType.FireBunker_Hellion == m_Type && this.Target != null)
+                if (TurretType.FireBunker_Hellion == m_Type && m_Target != null)
                 {
-                    if((x + 1 == this.Target.Uniq_X && y - 1 == this.Target.Uniq_Y) ||
-                        (x + 1 == this.Target.Uniq_X && y + 1 == this.Target.Uniq_Y) ||
-                       (x - 1 == this.Target.Uniq_X && y - 1 == this.Target.Uniq_Y) ||
-                       (x - 1 == this.Target.Uniq_X && y + 1 == this.Target.Uniq_Y) || 
-                       (x == this.Target.Uniq_X && y + 1 == this.Target.Uniq_Y) ||
-                       (x == this.Target.Uniq_X && y - 1 == this.Target.Uniq_Y) ||
-                       (x + 1 == this.Target.Uniq_X && y == this.Target.Uniq_Y) ||
-                       (x - 1 == this.Target.Uniq_X && y == this.Target.Uniq_Y))
+                    if((x + 1 == m_Target.X && y - 1 == m_Target.Y) ||
+                        (x + 1 == m_Target.X && y + 1 == m_Target.Y) ||
+                       (x - 1 == m_Target.X && y - 1 == m_Target.Y) ||
+                       (x - 1 == m_Target.X && y + 1 == m_Target.Y) || 
+                       (x == m_Target.X && y + 1 == m_Target.Y) ||
+                       (x == m_Target.X && y - 1 == m_Target.Y) ||
+                       (x + 1 == m_Target.X && y == m_Target.Y) ||
+                       (x - 1 == m_Target.X && y == m_Target.Y))
                     {
-                        if(this.Target.GetHealthStatus() <= 0)
+                        if(m_Target.GetHealthStatus() <= 0)
                             return false;
 
-                        this.Target.TakeDamage(m_Damage);
+                        m_Target.TakeDamage(m_Damage);
 
-                        if (this.Target.GetHealthStatus() > 0)
+                        if (m_Target.GetHealthStatus() > 0)
                             return false;
 
                         // destroy the enemy if the health is <= 0
-                        this.Target.TryKilling();
-                        internal_Variables.EnemyPositions.Remove(this.Target);
-                        this.Target = null;
+                        m_Target.TryKilling();
+                        internal_Variables.EnemyPositions.Remove(m_Target);
+                        m_Target = null;
 
                         internal_Variables.EnemiesCurrentlyKilled++;
                         
@@ -203,42 +204,42 @@ namespace TowerDefence
                     }
                 }
 
-                else if (enemy.Uniq_X == x && enemy.Uniq_Y == y)
+                else if (enemy.X == x && enemy.Y == y)
                 {
                     enemy.TakeDamage(m_Damage);
                     // add the burning effect 
 
-                    if (this.m_Type == TurretType.FireBunker_Basic)
+                    if (m_Type == TurretType.FireBunker_Basic)
                     {
-                        for (int j = 0; j < this.internal_Variables.BleedingEnemies.Count; j++)
+                        for (int j = 0; j < internal_Variables.BleedingEnemies.Count; j++)
                         {
-                            var bleeding = this.internal_Variables.BleedingEnemies[j];
+                            var bleeding = internal_Variables.BleedingEnemies[j];
 
                             if (bleeding.Target == enemy)
                             {
-                                this.internal_Variables.BleedingEnemies.Remove(bleeding);
+                                internal_Variables.BleedingEnemies.Remove(bleeding);
                                 break;
                             }
                         }
 
-                        this.internal_Variables.BleedingEnemies.Add(new BleedingEffect(ref enemy, this.FireEffect, 3, 
-                            Enums.BleedingTypes.FireBleed, ref this.internal_Variables));
+                        internal_Variables.BleedingEnemies.Add(new BleedingEffect(ref enemy, FireEffect, 3, 
+                            Enums.BleedingTypes.FireBleed, ref internal_Variables));
                         enemy.BleedingEffects.Add(Enums.BleedingTypes.FireBleed);
                     }
 
-                    if(this.m_Type == TurretType.FireBunker_Demoman) // if the grenade is right on target
+                    if(m_Type == TurretType.FireBunker_Demoman) // if the grenade is right on target
                     {
                         Random random = new Random();
                         int randomDigit = random.Next(0, 100);
 
                         if (randomDigit < 50) // explode now
-                            this.internal_Variables.Grenades[this.internal_Variables.Grenades.Count-1].ExplodeNow();
+                            internal_Variables.Grenades[internal_Variables.Grenades.Count-1].ExplodeNow();
 
                         return true;
                         //explode now
                     }
 
-                    if(this.m_Type == TurretType.FireBunker_Infernal)
+                    if(m_Type == TurretType.FireBunker_Infernal)
                     {
                         int curX = x;
                         int curY = y;
@@ -292,10 +293,10 @@ namespace TowerDefence
 
                     }
 
-                    if (this.m_Type == TurretType.Tardus)
+                    if (m_Type == TurretType.Tardus)
                     {
                         enemy.MoveRate *= 2;
-                        this.internal_Variables.SlowedEnemies.Add(enemy);
+                        internal_Variables.SlowedEnemies.Add(enemy);
                         enemy.State = Enums.EnemyState.Slowed;
                         enemy.SlowedTime = DateTime.Now;
                         enemy.SlowedDuration = SetUpVariables.Level_1_Tardus_Slow_Duration;
@@ -323,6 +324,6 @@ namespace TowerDefence
         public DateTime LastTimeShot { get => m_LastTimeShot; set => m_LastTimeShot = value; }
         internal SetUpVariables Variables { get => internal_Variables; set => internal_Variables = value; }
         public int FireEffect { get => m_FireEffect; set => m_FireEffect = value; }
-        internal Enemy Target { get => m_target; set => m_target = value; }
+        internal Enemy Target { get => m_Target; set => m_Target = value; }
     }
 }

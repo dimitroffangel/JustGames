@@ -12,7 +12,7 @@ namespace TowerDefence.Objects
         private BleedingTypes m_BleedingType;
         private DateTime m_StartTime;
        
-        private SetUpVariables m_Variables;
+        private SetUpVariables internal_Variables;
 
         public BleedingEffect(ref Enemy enemy, int damage, int duration, BleedingTypes type, ref SetUpVariables variables)
         {
@@ -23,7 +23,7 @@ namespace TowerDefence.Objects
             m_BleedingType = type;
             m_StartTime = DateTime.Now;
 
-            m_Variables = variables;
+            internal_Variables = variables;
         }
 
         public void ActivateEffect()
@@ -41,7 +41,8 @@ namespace TowerDefence.Objects
             {
                 DateTime curTime = DateTime.Now;
 
-                // check if the time is the appropriate one, if so do damage, TryKillingTheEnemy(), if succeeeds nullify the target 
+                // check if the time is the appropriate one, if so do damage, 
+                // TryKillingTheEnemy(), if succeeeds, nullify the target 
                 // increase the number of kills 
                 if((curTime - m_StartTime).TotalSeconds >= 1)
                 {
@@ -50,9 +51,9 @@ namespace TowerDefence.Objects
                     if (m_Target.GetHealthStatus() <= 0)
                     {
                         m_Target.TryKilling();
-                        this.m_Variables.EnemyPositions.Remove(m_Target);
+                        internal_Variables.EnemyPositions.Remove(m_Target);
                         m_Target = null;
-                        this.Variables.EnemiesCurrentlyKilled++;
+                        Variables.EnemiesCurrentlyKilled++;
                     }
                     m_CurDuration++;
                 }
@@ -66,6 +67,6 @@ namespace TowerDefence.Objects
 
 
         internal Enemy Target { get => m_Target; set => m_Target = value; }
-        internal SetUpVariables Variables { get => m_Variables; set => m_Variables = value; }
+        internal SetUpVariables Variables { get => internal_Variables; set => internal_Variables = value; }
     }
 }

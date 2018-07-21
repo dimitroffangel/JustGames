@@ -5,26 +5,20 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 {
     class Hellion : FlameThrower
     {
-        private SetUpVariables internal_Variables;
         private DateTime m_timeDeparture;
         public const float m_MoveRate = 0.4f;
         
-        private List<Position> moveCommands;
-        private Position initialTargetPosition;
-        private int currentCommands;
-        private List<int> availableBattlegrounds;
-
-        private List<Position> bfsCommands;
+        private List<Position> m_MoveCommands;
+        private Position m_InitialTargetPosition;
+        private int m_CurrentCommand;
 
         public Hellion(int x, int y, TurretType turretType, TurretPlacement placement, 
             ref SetUpVariables variables) : base(x, y, turretType, placement, ref variables)
         {
-            internal_Variables = variables;
             m_timeDeparture = DateTime.Now;
-            moveCommands = new List<Position>();
-            currentCommands = 0;
-
-            bfsCommands = new List<Position>();
+            m_MoveCommands = new List<Position>();
+            m_CurrentCommand = 0;
+           
         }
 
         private void FindTarget()
@@ -32,7 +26,6 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             float minDistance = int.MaxValue;
             int minIndex = -1;
             int index = -1;
-            bool hasRemovedHunter = false;
 
             foreach (var enemy in internal_Variables.EnemyPositions)
             {
@@ -41,7 +34,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
                 if (minDistance > curDistance)
                 {
-                    if((this.Target != null && (this.Target.Uniq_X != enemy.Uniq_X && this.Target.Uniq_Y != enemy.Uniq_Y)) || 
+                    if((this.Target != null && (this.Target.X != enemy.X && this.Target.Y != enemy.Y)) || 
                         this.Target == null)
                     {
                         if(enemy.TargetedBy.Count == 4)
@@ -58,7 +51,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
             this.Target = internal_Variables.EnemyPositions[minIndex];
             this.Target.TargetedBy.Add(this);
-            this.initialTargetPosition = new Position(this.Target.Uniq_X, this.Target.Uniq_Y);
+            m_InitialTargetPosition = new Position(this.Target.X, this.Target.Y);
 
             // find the moving direction of the target
         }
@@ -99,14 +92,14 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             Position currentDirection = new Position(0, 0);
 
             // top
-            if ((currentPosition.Uniq_X >= 0 && currentPosition.Uniq_X < Console.WindowWidth &&
-                currentPosition.Uniq_Y - 1 >= 0 && currentPosition.Uniq_Y - 1 < Console.WindowHeight &&
-                !ContainsBattleground(currentPosition.Uniq_X, currentPosition.Uniq_Y - 1) &&
-                !ContainsMove(currentPosition.Uniq_X, currentPosition.Uniq_Y - 1) &&
-                !ContainsObstacle(currentPosition.Uniq_X, currentPosition.Uniq_Y - 1)) ||
-                new Position(currentPosition.Uniq_X, currentPosition.Uniq_Y - 1) == enemy)
+            if ((currentPosition.X >= 0 && currentPosition.X < Console.WindowWidth &&
+                currentPosition.Y - 1 >= 0 && currentPosition.Y - 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.X, currentPosition.Y - 1) &&
+                !ContainsMove(currentPosition.X, currentPosition.Y - 1) &&
+                !ContainsObstacle(currentPosition.X, currentPosition.Y - 1)) ||
+                new Position(currentPosition.X, currentPosition.Y - 1) == enemy)
             {
-                currentDirection = new Position(currentPosition.Uniq_X, currentPosition.Uniq_Y - 1);
+                currentDirection = new Position(currentPosition.X, currentPosition.Y - 1);
 
                 if (enemy == currentDirection)
                     return;
@@ -121,14 +114,14 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             }
 
             // top-right
-            if ((currentPosition.Uniq_X + 1 >= 0 && currentPosition.Uniq_X + 1 < Console.WindowWidth &&
-                currentPosition.Uniq_Y - 1 >= 0 && currentPosition.Uniq_Y - 1 < Console.WindowHeight &&
-                !ContainsBattleground(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y - 1) &&
-                !ContainsMove(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y - 1) &&
-                !ContainsObstacle(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y - 1)) ||
-                new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y - 1) == enemy)
+            if ((currentPosition.X + 1 >= 0 && currentPosition.X + 1 < Console.WindowWidth &&
+                currentPosition.Y - 1 >= 0 && currentPosition.Y - 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.X + 1, currentPosition.Y - 1) &&
+                !ContainsMove(currentPosition.X + 1, currentPosition.Y - 1) &&
+                !ContainsObstacle(currentPosition.X + 1, currentPosition.Y - 1)) ||
+                new Position(currentPosition.X + 1, currentPosition.Y - 1) == enemy)
             {
-                currentDirection = new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y - 1);
+                currentDirection = new Position(currentPosition.X + 1, currentPosition.Y - 1);
 
                 if (enemy == currentDirection)
                     return;
@@ -142,14 +135,14 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 }
             }
             // right
-            if ((currentPosition.Uniq_X + 1 >= 0 && currentPosition.Uniq_X + 1 < Console.WindowWidth &&
-                currentPosition.Uniq_Y >= 0 && currentPosition.Uniq_Y < Console.WindowHeight &&
-                !ContainsBattleground(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y) &&
-                !ContainsMove(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y) &&
-                !ContainsObstacle(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y)) ||
-                new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y) == enemy)
+            if ((currentPosition.X + 1 >= 0 && currentPosition.X + 1 < Console.WindowWidth &&
+                currentPosition.Y >= 0 && currentPosition.Y < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.X + 1, currentPosition.Y) &&
+                !ContainsMove(currentPosition.X + 1, currentPosition.Y) &&
+                !ContainsObstacle(currentPosition.X + 1, currentPosition.Y)) ||
+                new Position(currentPosition.X + 1, currentPosition.Y) == enemy)
             {
-                currentDirection = new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y);
+                currentDirection = new Position(currentPosition.X + 1, currentPosition.Y);
 
                 if (enemy == currentDirection)
                     return;
@@ -164,14 +157,14 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             }
             // bot-right
 
-            if ((currentPosition.Uniq_X + 1 >= 0 && currentPosition.Uniq_X + 1 < Console.WindowWidth &&
-                currentPosition.Uniq_Y + 1 >= 0 && currentPosition.Uniq_Y + 1 < Console.WindowHeight &&
-                !ContainsBattleground(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y + 1) &&
-                !ContainsMove(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y + 1) &&
-                !ContainsObstacle(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y + 1)) ||
-                new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y + 1) == enemy)
+            if ((currentPosition.X + 1 >= 0 && currentPosition.X + 1 < Console.WindowWidth &&
+                currentPosition.Y + 1 >= 0 && currentPosition.Y + 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.X + 1, currentPosition.Y + 1) &&
+                !ContainsMove(currentPosition.X + 1, currentPosition.Y + 1) &&
+                !ContainsObstacle(currentPosition.X + 1, currentPosition.Y + 1)) ||
+                new Position(currentPosition.X + 1, currentPosition.Y + 1) == enemy)
             {
-                currentDirection = new Position(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y + 1);
+                currentDirection = new Position(currentPosition.X + 1, currentPosition.Y + 1);
 
 
                 if (enemy == currentDirection)
@@ -186,14 +179,14 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 }
             }
             // bot
-            if ((currentPosition.Uniq_X >= 0 && currentPosition.Uniq_X < Console.WindowWidth &&
-                currentPosition.Uniq_Y + 1 >= 0 && currentPosition.Uniq_Y + 1 < Console.WindowHeight &&
-                !ContainsBattleground(currentPosition.Uniq_X, currentPosition.Uniq_Y + 1) &&
-                !ContainsMove(currentPosition.Uniq_X, currentPosition.Uniq_Y + 1) &&
-                !ContainsObstacle(currentPosition.Uniq_X, currentPosition.Uniq_Y + 1)) ||
-                new Position(currentPosition.Uniq_X, currentPosition.Uniq_Y + 1) == enemy)
+            if ((currentPosition.X >= 0 && currentPosition.X < Console.WindowWidth &&
+                currentPosition.Y + 1 >= 0 && currentPosition.Y + 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.X, currentPosition.Y + 1) &&
+                !ContainsMove(currentPosition.X, currentPosition.Y + 1) &&
+                !ContainsObstacle(currentPosition.X, currentPosition.Y + 1)) ||
+                new Position(currentPosition.X, currentPosition.Y + 1) == enemy)
             {
-                currentDirection = new Position(currentPosition.Uniq_X, currentPosition.Uniq_Y + 1);
+                currentDirection = new Position(currentPosition.X, currentPosition.Y + 1);
 
                 if (enemy == currentDirection)
                     return;
@@ -207,14 +200,14 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 }
             }
             // bot-left
-            if ((currentPosition.Uniq_X - 1 >= 0 && currentPosition.Uniq_X - 1 < Console.WindowWidth &&
-                currentPosition.Uniq_Y + 1 >= 0 && currentPosition.Uniq_Y + 1 < Console.WindowHeight &&
-                !ContainsBattleground(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y + 1) &&
-                !ContainsMove(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y + 1) &&
-                !ContainsObstacle(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y + 1)) ||
-                new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y + 1) == enemy)
+            if ((currentPosition.X - 1 >= 0 && currentPosition.X - 1 < Console.WindowWidth &&
+                currentPosition.Y + 1 >= 0 && currentPosition.Y + 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.X - 1, currentPosition.Y + 1) &&
+                !ContainsMove(currentPosition.X - 1, currentPosition.Y + 1) &&
+                !ContainsObstacle(currentPosition.X - 1, currentPosition.Y + 1)) ||
+                new Position(currentPosition.X - 1, currentPosition.Y + 1) == enemy)
             {
-                currentDirection =  new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y + 1);
+                currentDirection =  new Position(currentPosition.X - 1, currentPosition.Y + 1);
 
 
                 if (enemy == currentDirection)
@@ -229,14 +222,14 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 }
             }
             // left
-            if ((currentPosition.Uniq_X - 1 >= 0 && currentPosition.Uniq_X - 1 < Console.WindowWidth &&
-                currentPosition.Uniq_Y >= 0 && currentPosition.Uniq_Y < Console.WindowHeight &&
-                !ContainsBattleground(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y) &&
-                !ContainsObstacle(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y) &&
-                !ContainsMove(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y)) ||
-                new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y) == enemy)
+            if ((currentPosition.X - 1 >= 0 && currentPosition.X - 1 < Console.WindowWidth &&
+                currentPosition.Y >= 0 && currentPosition.Y < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.X - 1, currentPosition.Y) &&
+                !ContainsObstacle(currentPosition.X - 1, currentPosition.Y) &&
+                !ContainsMove(currentPosition.X - 1, currentPosition.Y)) ||
+                new Position(currentPosition.X - 1, currentPosition.Y) == enemy)
             {
-                currentDirection = new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y);
+                currentDirection = new Position(currentPosition.X - 1, currentPosition.Y);
 
 
                 if (enemy == currentDirection)
@@ -252,14 +245,14 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             }
 
             // top-left
-            if ((currentPosition.Uniq_X - 1 >= 0 && currentPosition.Uniq_X - 1 < Console.WindowWidth &&
-                currentPosition.Uniq_Y - 1 >= 0 && currentPosition.Uniq_Y - 1 < Console.WindowHeight &&
-                !ContainsBattleground(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y - 1) &&
-                !ContainsObstacle(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y - 1) &&
-                !ContainsMove(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y - 1)) ||
-                new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y - 1) == enemy)
+            if ((currentPosition.X - 1 >= 0 && currentPosition.X - 1 < Console.WindowWidth &&
+                currentPosition.Y - 1 >= 0 && currentPosition.Y - 1 < Console.WindowHeight &&
+                !ContainsBattleground(currentPosition.X - 1, currentPosition.Y - 1) &&
+                !ContainsObstacle(currentPosition.X - 1, currentPosition.Y - 1) &&
+                !ContainsMove(currentPosition.X - 1, currentPosition.Y - 1)) ||
+                new Position(currentPosition.X - 1, currentPosition.Y - 1) == enemy)
             {
-                currentDirection = new Position(currentPosition.Uniq_X - 1, currentPosition.Uniq_Y - 1);
+                currentDirection = new Position(currentPosition.X - 1, currentPosition.Y - 1);
 
                 if (enemy == currentDirection)
                     return;
@@ -273,17 +266,17 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 }
             }
             
-            moveCommands.Add(nearestPoint);
+            m_MoveCommands.Add(nearestPoint);
             FindBfsPath(enemy, nearestPoint);
         }
 
         private int GetBattlefieldIndex(int x, int y)
         {
-            for (int i = 0; i < this.Variables.Battleground.Count; i++)
+            for (int i = 0; i < internal_Variables.Battleground.Count; i++)
             {
-                var currentBattlefield = this.Variables.Battleground[i];
+                var currentBattlefield = internal_Variables.Battleground[i];
 
-                if (currentBattlefield.Uniq_X == x && currentBattlefield.Uniq_Y == y)
+                if (currentBattlefield.X == x && currentBattlefield.Y == y)
                     return i;
             }
 
@@ -307,9 +300,9 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 return;
             }
 
-            Position hellionPosition = new Position(this.Uniq_X, this.Uniq_Y);
-            Position targetPosition = new Position(this.Target.Uniq_X, this.Target.Uniq_Y);
-            int indexTargetPosition = GetBattlefieldIndex(targetPosition.Uniq_X, targetPosition.Uniq_Y);
+            Position hellionPosition = new Position(this.X, this.Y);
+            Position targetPosition = new Position(this.Target.X, this.Target.Y);
+            int indexTargetPosition = GetBattlefieldIndex(targetPosition.X, targetPosition.Y);
             int hellionIndexTargetPosition = indexTargetPosition;
             var hellionTargetPosition = targetPosition;
             int fromIndex = indexTargetPosition;
@@ -322,7 +315,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
             // find the shortest path to the target with BFS
 
-            float hellionTakenTime = m_MoveRate * (moveCommands.Count);
+            float hellionTakenTime = m_MoveRate * (m_MoveCommands.Count);
             // bfsCommands.Count = hellionTakenTime / m_MoveRate
 
             // this is the target calculated distance taken for the time the hellion moves
@@ -345,10 +338,10 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 timeTaken.Add(takenTime);
 
                 ClearPathData();
-                FindBfsPath(new Position(hellionTargetPosition.Uniq_X, hellionTargetPosition.Uniq_Y), 
-                    new Position(this.Uniq_X, this.Uniq_Y));
+                FindBfsPath(new Position(hellionTargetPosition.X, hellionTargetPosition.Y), 
+                    new Position(this.X, this.Y));
 
-                hellionTakenTime = (m_MoveRate + 0.04f) * (moveCommands.Count);
+                hellionTakenTime = (m_MoveRate + 0.04f) * (m_MoveCommands.Count);
                 blocksCircled = (int)Math.Floor(hellionTakenTime / (this.Target.MoveRate))+1;
                 
                 if (fromIndex == hellionIndexTargetPosition || toIndex == hellionIndexTargetPosition)
@@ -405,9 +398,9 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
         private bool ContainsMove(int x, int y)
         {
-            foreach(var move in this.moveCommands)
+            foreach(var move in m_MoveCommands)
             {
-                if (move.Uniq_X == x && move.Uniq_Y == y)
+                if (move.X == x && move.Y == y)
                     return true;
             }
 
@@ -418,7 +411,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
         {
             foreach(var turret in internal_Variables.TurretsPosition)
             {
-                if(turret.Uniq_X == x && turret.Uniq_Y == y)
+                if(turret.X == x && turret.Y == y)
                     return true;
             }
 
@@ -429,7 +422,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
         {
             foreach (var field in internal_Variables.Battleground)
             {
-                if (field.Uniq_X == x && field.Uniq_Y == y)
+                if (field.X == x && field.Y == y)
                     return true;
             }
             return false;
@@ -439,7 +432,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
         {
             foreach (var obstacles in internal_Variables.ObstaclePositions)
             {
-                if (obstacles.Uniq_X == x && obstacles.Uniq_Y == y)
+                if (obstacles.X == x && obstacles.Y == y)
                     return true;
             }
             return false;
@@ -447,15 +440,15 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
         private void ClearPathData()
         {
-            moveCommands.Clear();
-            currentCommands = 0;
+            m_MoveCommands.Clear();
+            m_CurrentCommand = 0;
         }
 
         public void Move()
         {
             DateTime currentTime = DateTime.Now;
 
-            if (moveCommands.Count == currentCommands || moveCommands.Count == 0)
+            if (m_MoveCommands.Count == m_CurrentCommand || m_MoveCommands.Count == 0)
             {
                 // clear the path
                 ClearPathData();
@@ -470,15 +463,15 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 return;
             }
 
-            if ((currentTime - m_timeDeparture).TotalSeconds < m_MoveRate || moveCommands.Count == currentCommands
-                || moveCommands.Count == 0)
+            if ((currentTime - m_timeDeparture).TotalSeconds < m_MoveRate || m_MoveCommands.Count == m_CurrentCommand
+                || m_MoveCommands.Count == 0)
                 return;
 
             m_timeDeparture = currentTime;
 
             if (this.Target == null || this.Target.GetHealthStatus() <= 0)
             {
-                if(initialTargetPosition != null) // this is not the first time to search for a new target
+                if(m_InitialTargetPosition != null) // this is not the first time to search for a new target
                     this.ClearPathData();
 
                 if (this.Target != null && this.Target.GetHealthStatus() <= 0)
@@ -488,17 +481,17 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 SetHellionRoad();
                 return;
             }
-            Console.SetCursorPosition(this.Uniq_X, this.Uniq_Y);
+            Console.SetCursorPosition(this.X, this.Y);
             Console.Write(" ");
             
-            Uniq_X = moveCommands[currentCommands].Uniq_X;
-            Uniq_Y = moveCommands[currentCommands].Uniq_Y;
+            X = m_MoveCommands[m_CurrentCommand].X;
+            Y = m_MoveCommands[m_CurrentCommand].Y;
 
-            currentCommands++;
+            m_CurrentCommand++;
 
             // check if the new position does not overlap with a turret
 
-            Console.SetCursorPosition(this.Uniq_X, this.Uniq_Y);
+            Console.SetCursorPosition(this.X, this.Y);
             Console.Write("&");
         }
 

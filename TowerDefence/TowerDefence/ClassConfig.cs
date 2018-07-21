@@ -6,11 +6,11 @@ namespace TowerDefence
 {
     class ClassConfig
     {
-        private SetUpVariables Variables;
+        private SetUpVariables internal_Variables;
 
         public ClassConfig(ref SetUpVariables variables)
         {
-            this.Variables = variables;
+            internal_Variables = variables;
         }
 
         public void ReadImportantInformation()
@@ -18,15 +18,15 @@ namespace TowerDefence
             StreamReader reader = new StreamReader("./PlayerConfig.txt");
 
             // the lines in the file are 9
-            this.ReadLine(reader.ReadLine(), ref this.Variables.PocketMoney);
+            this.ReadLine(reader.ReadLine(), ref internal_Variables.PocketMoney);
             reader.ReadLine();
-            this.ReadLine(reader.ReadLine(), ref this.Variables.EnemiesKilled);
-            this.ReadLine(reader.ReadLine(), ref this.Variables.EnemiesMissed);
-            this.ReadLine(reader.ReadLine(), ref this.Variables.TurretsLost);
-            this.ReadLine(reader.ReadLine(), ref this.Variables.AmmoLost);
-            this.ReadLine(reader.ReadLine(), ref this.Variables.Rocks_Felt_On_Turret);
-            this.ReadLine(reader.ReadLine(), ref this.Variables.Rocks_Felt_On_You);
-            this.ReadLine(reader.ReadLine(), ref this.Variables.Highest_Level_Reached);
+            this.ReadLine(reader.ReadLine(), ref internal_Variables.EnemiesKilled);
+            this.ReadLine(reader.ReadLine(), ref internal_Variables.EnemiesMissed);
+            this.ReadLine(reader.ReadLine(), ref internal_Variables.TurretsLost);
+            this.ReadLine(reader.ReadLine(), ref internal_Variables.AmmoLost);
+            this.ReadLine(reader.ReadLine(), ref internal_Variables.Rocks_Felt_On_Turret);
+            this.ReadLine(reader.ReadLine(), ref internal_Variables.Rocks_Felt_On_You);
+            this.ReadLine(reader.ReadLine(), ref internal_Variables.Highest_Level_Reached);
 
             reader.Close();
         }

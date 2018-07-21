@@ -5,17 +5,17 @@ namespace TowerDefence
 {
     class LevelSetup
     {
-        public int level;
-        private SetUpVariables Variables;
+        public int m_Level;
+        private SetUpVariables internal_Variables;
 
         public LevelSetup(int level, ref SetUpVariables variables, int enemies)
         {
             Console.Clear();
+            m_Level = level;
 
-            this.Variables = variables;
-            this.level = level;
-            this.Variables.EnemiesCount = enemies;
-            this.Variables.EnemiesInitially = enemies;
+            internal_Variables = variables;
+            internal_Variables.EnemiesCount = enemies;
+            internal_Variables.EnemiesInitially = enemies;
 
             this.LoadLevel();
         }
@@ -23,56 +23,61 @@ namespace TowerDefence
         #region Levels
         private void LoadLevel()
         {
-            if (this.level == 1 || this.level == 2)
+            if (m_Level == 1 || m_Level == 2)
                 this.Level_One();
         }
 
         private void Level_One()
         {
-                this.Variables.IsGameOver = false;
-                this.Variables.CurrentRow = SetUpVariables.InitialRow;
-                this.Variables.CurrentCol = SetUpVariables.InitialCol;
+                internal_Variables.IsGameOver = false;
+                internal_Variables.CurrentRow = SetUpVariables.InitialRow;
+                internal_Variables.CurrentCol = SetUpVariables.InitialCol;
 
                 for (int i = 0; i < Console.WindowHeight-6; ++i)
                 {
-                    Console.SetCursorPosition(this.Variables.CurrentCol, this.Variables.CurrentRow);
+                    Console
+                    .SetCursorPosition(internal_Variables.CurrentCol, internal_Variables.CurrentRow);
                     Console.Write("|");
-                    this.Variables.CurrentCol += 2;
-                    Console.SetCursorPosition(this.Variables.CurrentCol--, this.Variables.CurrentRow);
+                    internal_Variables.CurrentCol += 2;
+                    Console.SetCursorPosition(internal_Variables.CurrentCol--, 
+                        internal_Variables.CurrentRow);
                     Console.Write("|");
                 
-                    this.Variables.Battleground.Add(new Position(this.Variables.CurrentCol, this.Variables.CurrentRow));
-                    Console.SetCursorPosition(this.Variables.CurrentCol--, this.Variables.CurrentRow++);
+                    internal_Variables.Battleground
+                    .Add(new Position(internal_Variables.CurrentCol, internal_Variables.CurrentRow));
+                    Console
+                    .SetCursorPosition(internal_Variables.CurrentCol--, internal_Variables.CurrentRow++);
                     Console.Write("!");
                 }
 
-                Console.SetCursorPosition(this.Variables.CurrentCol++, this.Variables.CurrentRow);
+                Console
+                .SetCursorPosition(internal_Variables.CurrentCol++, internal_Variables.CurrentRow);
                 Console.Write("|");
 
                 for (int i = 0; i < Console.WindowWidth-35; ++i)
                 {
-                    this.Variables.Battleground.Add(new Position(this.Variables.CurrentCol, this.Variables.CurrentRow));
-                    Console.SetCursorPosition(this.Variables.CurrentCol++, this.Variables.CurrentRow);
+                    internal_Variables.Battleground.Add(new Position(internal_Variables.CurrentCol, internal_Variables.CurrentRow));
+                    Console.SetCursorPosition(internal_Variables.CurrentCol++, internal_Variables.CurrentRow);
                     Console.Write("!");
 
-                    Console.SetCursorPosition(this.Variables.CurrentCol, --this.Variables.CurrentRow);
+                    Console.SetCursorPosition(internal_Variables.CurrentCol, --internal_Variables.CurrentRow);
                     Console.Write("_");
-                    Console.SetCursorPosition(this.Variables.CurrentCol, ++this.Variables.CurrentRow + 1);
+                    Console.SetCursorPosition(internal_Variables.CurrentCol, ++internal_Variables.CurrentRow + 1);
                     Console.Write("-");
                 }
-                Console.SetCursorPosition(this.Variables.CurrentCol, this.Variables.CurrentRow);
+                Console.SetCursorPosition(internal_Variables.CurrentCol, internal_Variables.CurrentRow);
                 Console.Write("!");
 
                 for (int i = 0; i < Console.WindowHeight - 5; ++i)
                 {
-                    Console.SetCursorPosition(this.Variables.CurrentCol, this.Variables.CurrentRow);
+                    Console.SetCursorPosition(internal_Variables.CurrentCol, internal_Variables.CurrentRow);
                     Console.Write("|");
-                    this.Variables.CurrentCol += 2;
-                    Console.SetCursorPosition(this.Variables.CurrentCol--, this.Variables.CurrentRow);
+                    internal_Variables.CurrentCol += 2;
+                    Console.SetCursorPosition(internal_Variables.CurrentCol--, internal_Variables.CurrentRow);
                     Console.Write("|");
                 
-                    this.Variables.Battleground.Add(new Position(this.Variables.CurrentCol, this.Variables.CurrentRow));
-                    Console.SetCursorPosition(this.Variables.CurrentCol--, this.Variables.CurrentRow--);
+                    internal_Variables.Battleground.Add(new Position(internal_Variables.CurrentCol, internal_Variables.CurrentRow));
+                    Console.SetCursorPosition(internal_Variables.CurrentCol--, internal_Variables.CurrentRow--);
                     Console.Write("!");
                 }
         }

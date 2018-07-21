@@ -4,22 +4,22 @@ namespace TowerDefence
 {
     abstract class ICollide
     {
-        public SetUpVariables Variables;
+        public SetUpVariables internal_Variables;
 
         public ICollide(ref SetUpVariables variables)
         {
-            this.Variables = variables;
+            internal_Variables = variables;
         }
 
         public bool IsPlayerCollidingWithEnemy(int additionX, int additionY)
         {
-            Position playerPosition = new Position(Variables.PlayerCol + additionX, Variables.PlayerRow + additionY);
+            Position playerPosition = new Position(internal_Variables.PlayerCol + additionX, internal_Variables.PlayerRow + additionY);
 
-            foreach (var enemy in Variables.EnemyPositions)
+            foreach (var enemy in internal_Variables.EnemyPositions)
             {
-                if (playerPosition.Uniq_X == enemy.Uniq_X)
+                if (playerPosition.X == enemy.X)
                 {
-                    if (playerPosition.Uniq_Y == enemy.Uniq_Y)
+                    if (playerPosition.Y == enemy.Y)
                         return true;
                 }
             }
@@ -29,18 +29,18 @@ namespace TowerDefence
 
         public bool IsRockOnTurret(Position obstaclePosition)
         {
-            for (int i = 0; i < this.Variables.TurretsPosition.Count; i++)
+            for (int i = 0; i < internal_Variables.TurretsPosition.Count; i++)
             {
-                var turret = this.Variables.TurretsPosition[i];
+                var turret = internal_Variables.TurretsPosition[i];
 
-                if (turret.Uniq_X == obstaclePosition.Uniq_X &&
-                   turret.Uniq_Y == obstaclePosition.Uniq_Y)
+                if (turret.X == obstaclePosition.X &&
+                   turret.Y == obstaclePosition.Y)
                 {
                     // draw the animation
-                    Console.SetCursorPosition(turret.Uniq_X, turret.Uniq_Y);
+                    Console.SetCursorPosition(turret.X, turret.Y);
                     Console.Write(" ");
                     // remove the turret
-                    this.Variables.TurretsPosition.Remove(turret);
+                    internal_Variables.TurretsPosition.Remove(turret);
                     return true;
                 }
             }
