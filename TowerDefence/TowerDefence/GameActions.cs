@@ -135,7 +135,7 @@ namespace TowerDefence
             
             if(input == 1) // New Game
             {
-                LevelSetup level = new LevelSetup(1, ref this.Variables, 100);
+                LevelSetup level = new LevelSetup(1, ref this.Variables, 1000);
                 this.Variables.CurrentLevel = 1;
                 PlayGame();
             }

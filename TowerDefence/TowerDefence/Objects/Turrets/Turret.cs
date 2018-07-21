@@ -114,6 +114,7 @@ namespace TowerDefence
 
                 foreach (var enemy in internal_Variables.EnemyPositions)
                 {
+                    enemy.TakeDamage(1000);
                     Console.SetCursorPosition(enemy.Uniq_X, enemy.Uniq_Y);
                     Console.Write(" ");
                 }
@@ -169,7 +170,6 @@ namespace TowerDefence
             for(int i = 0; i< internal_Variables.EnemyPositions.Count; i++)
             {
                 var enemy = internal_Variables.EnemyPositions[i];
-
                 if(enemy.GetHealthStatus() <= 0)
                     return false;
 

@@ -32,6 +32,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
             float minDistance = int.MaxValue;
             int minIndex = -1;
             int index = -1;
+            bool hasRemovedHunter = false;
 
             foreach (var enemy in internal_Variables.EnemyPositions)
             {
@@ -40,9 +41,12 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
                 if (minDistance > curDistance)
                 {
-                    if((this.Target != null && (this.Target.Uniq_X != enemy.Uniq_X || this.Target.Uniq_Y != enemy.Uniq_Y)) || 
+                    if((this.Target != null && (this.Target.Uniq_X != enemy.Uniq_X && this.Target.Uniq_Y != enemy.Uniq_Y)) || 
                         this.Target == null)
                     {
+                        if(enemy.TargetedBy.Count == 4)
+                            continue;
+
                         minIndex = index;
                         minDistance = curDistance;
                     }
@@ -53,6 +57,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 return;
 
             this.Target = internal_Variables.EnemyPositions[minIndex];
+            this.Target.TargetedBy.Add(this);
             this.initialTargetPosition = new Position(this.Target.Uniq_X, this.Target.Uniq_Y);
 
             // find the moving direction of the target
@@ -158,6 +163,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 }
             }
             // bot-right
+
             if ((currentPosition.Uniq_X + 1 >= 0 && currentPosition.Uniq_X + 1 < Console.WindowWidth &&
                 currentPosition.Uniq_Y + 1 >= 0 && currentPosition.Uniq_Y + 1 < Console.WindowHeight &&
                 !ContainsBattleground(currentPosition.Uniq_X + 1, currentPosition.Uniq_Y + 1) &&
@@ -278,7 +284,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 var currentBattlefield = this.Variables.Battleground[i];
 
                 if (currentBattlefield.Uniq_X == x && currentBattlefield.Uniq_Y == y)
-                    return i + 1;
+                    return i;
             }
 
             throw new ArgumentNullException("While searching for the battlefield index there was none found");
@@ -295,8 +301,11 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
              * TODO WHEN THE HELLION is not moving, but the target moves, the hellion must move immediately
             */
 
-            if (this.Target == null)
+            if (this.Target == null || this.Target.GetHealthStatus() <= 0)
+            {
+                FindTarget();
                 return;
+            }
 
             Position hellionPosition = new Position(this.Uniq_X, this.Uniq_Y);
             Position targetPosition = new Position(this.Target.Uniq_X, this.Target.Uniq_Y);
@@ -313,7 +322,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
 
             // find the shortest path to the target with BFS
 
-            float hellionTakenTime = m_MoveRate * moveCommands.Count;
+            float hellionTakenTime = m_MoveRate * (moveCommands.Count);
             // bfsCommands.Count = hellionTakenTime / m_MoveRate
 
             // this is the target calculated distance taken for the time the hellion moves
@@ -327,7 +336,10 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 if (this.Target == null || this.Target.GetHealthStatus() <= 0)
                     return;
 
-                hellionIndexTargetPosition = (fromIndex + toIndex) / 2;
+                hellionIndexTargetPosition = (int)Math.Ceiling((fromIndex + toIndex) / 2.0);
+                if (hellionIndexTargetPosition == internal_Variables.Battleground.Count)
+                    hellionIndexTargetPosition--;
+
                 hellionTargetPosition = internal_Variables.Battleground[hellionIndexTargetPosition];
                 var takenTime = (DateTime.Now - currentTime).TotalSeconds;
                 timeTaken.Add(takenTime);
@@ -336,13 +348,13 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 FindBfsPath(new Position(hellionTargetPosition.Uniq_X, hellionTargetPosition.Uniq_Y), 
                     new Position(this.Uniq_X, this.Uniq_Y));
 
-                hellionTakenTime = m_MoveRate * moveCommands.Count;
-                blocksCircled = (int)Math.Floor(hellionTakenTime / this.Target.MoveRate);
+                hellionTakenTime = (m_MoveRate + 0.04f) * (moveCommands.Count);
+                blocksCircled = (int)Math.Floor(hellionTakenTime / (this.Target.MoveRate))+1;
                 
                 if (fromIndex == hellionIndexTargetPosition || toIndex == hellionIndexTargetPosition)
                     break;
 
-                if (((blocksCircled + indexTargetPosition > hellionIndexTargetPosition - 3) ||
+                if ((
                     (blocksCircled + indexTargetPosition > hellionIndexTargetPosition - 2) ||
                     (blocksCircled + indexTargetPosition > hellionIndexTargetPosition - 1) ||
                     (blocksCircled + indexTargetPosition > hellionIndexTargetPosition)) &&
@@ -458,7 +470,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                 return;
             }
 
-            if ((currentTime - m_timeDeparture).Seconds < m_MoveRate || moveCommands.Count == currentCommands
+            if ((currentTime - m_timeDeparture).TotalSeconds < m_MoveRate || moveCommands.Count == currentCommands
                 || moveCommands.Count == 0)
                 return;
 

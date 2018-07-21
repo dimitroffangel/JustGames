@@ -16,6 +16,7 @@ namespace TowerDefence.Objects
         private float m_SlowedDuration;
         private DateTime slowedTime;
         private List<Enum> m_BleedingEffects;
+        private List<Turret> targetedBy;
 
         private SetUpVariables internal_Variables;
 
@@ -28,6 +29,7 @@ namespace TowerDefence.Objects
             m_TimeSinceLastMove = DateTime.Now;
             // set the primary things of the enemies
             m_BleedingEffects = new List<Enum>();
+            TargetedBy = new List<Turret>();
             this.SetStats();
         }
 
@@ -62,5 +64,6 @@ namespace TowerDefence.Objects
         internal EnemyState State { get => m_State; set => m_State = value; }
         public float SlowedDuration { get => m_SlowedDuration; set => m_SlowedDuration = value; }
         public DateTime SlowedTime { get => slowedTime; set => slowedTime = value; }
+        internal List<Turret> TargetedBy { get => targetedBy; set => targetedBy = value; }
     }
 }
