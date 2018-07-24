@@ -122,6 +122,8 @@ namespace TowerDefence
                 "5) Exit"
             };
 
+            int attempt;
+
             int heightAddition = -1;
 
             foreach(string option in options)

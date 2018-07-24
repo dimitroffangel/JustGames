@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace JustPingPong
@@ -149,6 +150,31 @@ namespace JustPingPong
                 ballPositionX++;
             else
                 ballPositionX--;
+        }
+
+        static void LoadMainMenu()
+        {
+            List<string> options = new List<string>()
+            {
+                "Player vs AI",
+                "Player vs Player"
+            };
+
+            int heightAddition = -1;
+
+            foreach (string option in options)
+            {
+                Console.SetCursorPosition(Console.WindowWidth / 2 - 10, Console.WindowHeight / 2 + ++heightAddition);
+                Console.WriteLine(option);
+            }
+
+            int input = 0;
+
+            while (!int.TryParse(Console.ReadLine(), out input))
+            {
+                Console.SetCursorPosition(0, 0);
+                Console.Write("Please enter a number");
+            }
         }
 
         static void Main()
