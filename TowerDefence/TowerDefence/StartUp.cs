@@ -10,7 +10,6 @@ namespace TowerDefence
 
         static void Main()
         {
-
             Console.CursorVisible = false;
             SetUpVariables variables = new SetUpVariables();
             GameActions gameActions = new GameActions(ref variables);

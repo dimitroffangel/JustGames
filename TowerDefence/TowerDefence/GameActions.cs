@@ -112,6 +112,7 @@ namespace TowerDefence
 
         public void LoadStartingMenu()
         {
+
             List<string> options = new List<string>()
             {
                 "1) New Game",
@@ -129,7 +130,13 @@ namespace TowerDefence
                 Console.WriteLine(option);
             }
 
-            int input = int.Parse(Console.ReadLine());
+            int input = 0;
+
+            while(!int.TryParse(Console.ReadLine(), out input))
+            {
+                Console.SetCursorPosition(0, 0);
+                Console.Write("Please enter a number");
+            }
 
             string configDirectory = "./PlayerConfig.txt";
             
