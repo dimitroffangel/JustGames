@@ -11,3 +11,10 @@ F:\Projects\BrudersOldProjects\JustGames\JustPingPong\JustPingPong\JustPingPong\
 F:\Projects\BrudersOldProjects\JustGames\JustPingPong\JustPingPong\JustPingPong\obj\Debug\JustPingPong.csproj.CoreCompileInputs.cache
 F:\Projects\BrudersOldProjects\JustGames\JustPingPong\JustPingPong\JustPingPong\obj\Debug\JustPingPong.exe
 F:\Projects\BrudersOldProjects\JustGames\JustPingPong\JustPingPong\JustPingPong\obj\Debug\JustPingPong.pdb
+D:\Projects\JustGames\JustGames\JustPingPong\JustPingPong\bin\Debug\JustPingPong.exe.config
+D:\Projects\JustGames\JustGames\JustPingPong\JustPingPong\bin\Debug\JustPingPong.exe
+D:\Projects\JustGames\JustGames\JustPingPong\JustPingPong\bin\Debug\JustPingPong.pdb
+D:\Projects\JustGames\JustGames\JustPingPong\JustPingPong\obj\Debug\JustPingPong.csprojAssemblyReference.cache
+D:\Projects\JustGames\JustGames\JustPingPong\JustPingPong\obj\Debug\JustPingPong.csproj.CoreCompileInputs.cache
+D:\Projects\JustGames\JustGames\JustPingPong\JustPingPong\obj\Debug\JustPingPong.exe
+D:\Projects\JustGames\JustGames\JustPingPong\JustPingPong\obj\Debug\JustPingPong.pdb

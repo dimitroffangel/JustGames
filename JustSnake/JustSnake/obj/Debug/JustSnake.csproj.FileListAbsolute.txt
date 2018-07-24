@@ -11,3 +11,10 @@ F:\Projects\Games\JustGames\JustSnake\JustSnake\JustSnake\obj\Debug\JustSnake.cs
 F:\Projects\Games\JustGames\JustSnake\JustSnake\JustSnake\obj\Debug\JustSnake.csproj.CoreCompileInputs.cache
 F:\Projects\Games\JustGames\JustSnake\JustSnake\JustSnake\obj\Debug\JustSnake.exe
 F:\Projects\Games\JustGames\JustSnake\JustSnake\JustSnake\obj\Debug\JustSnake.pdb
+D:\Projects\JustGames\JustGames\JustSnake\JustSnake\bin\Debug\JustSnake.exe.config
+D:\Projects\JustGames\JustGames\JustSnake\JustSnake\bin\Debug\JustSnake.exe
+D:\Projects\JustGames\JustGames\JustSnake\JustSnake\bin\Debug\JustSnake.pdb
+D:\Projects\JustGames\JustGames\JustSnake\JustSnake\obj\Debug\JustSnake.csprojAssemblyReference.cache
+D:\Projects\JustGames\JustGames\JustSnake\JustSnake\obj\Debug\JustSnake.csproj.CoreCompileInputs.cache
+D:\Projects\JustGames\JustGames\JustSnake\JustSnake\obj\Debug\JustSnake.exe
+D:\Projects\JustGames\JustGames\JustSnake\JustSnake\obj\Debug\JustSnake.pdb

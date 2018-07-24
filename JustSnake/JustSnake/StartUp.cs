@@ -116,8 +116,6 @@ namespace JustSnake
                 Console.Write("!");
             }
 
-            Position specialItem = new Position();
-
             while (true)
             {
                 if (Console.KeyAvailable)

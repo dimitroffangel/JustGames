@@ -6,6 +6,8 @@ namespace TowerDefence.Objects
 {
     abstract class Enemy : Position
     {
+        public const int TargetMaxEnemies = 4;
+
         private EnemyType m_Type;
         private EnemyState m_State;
         
@@ -34,7 +36,6 @@ namespace TowerDefence.Objects
         }
 
         protected abstract void SetStats();
-        protected abstract void Foo();
 
         public void TakeDamage(float damage)
         {

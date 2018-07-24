@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace JustPingPong
 {
-    class Program
+    class StartUp
     {
         const int firstPlayerPadSize = 4;
         const int secondPlayerPadSize = 12;
@@ -155,7 +151,7 @@ namespace JustPingPong
                 ballPositionX--;
         }
 
-        static void Main(String[] args)
+        static void Main()
         {
             RemoveScroll();
 

@@ -11,3 +11,10 @@ F:\Projects\Games\JustGames\JustTron\JustTron\JustTron\obj\Debug\JustTron.csproj
 F:\Projects\Games\JustGames\JustTron\JustTron\JustTron\obj\Debug\JustTron.csproj.CoreCompileInputs.cache
 F:\Projects\Games\JustGames\JustTron\JustTron\JustTron\obj\Debug\JustTron.exe
 F:\Projects\Games\JustGames\JustTron\JustTron\JustTron\obj\Debug\JustTron.pdb
+D:\Projects\JustGames\JustGames\JustTron\JustTron\bin\Debug\JustTron.exe.config
+D:\Projects\JustGames\JustGames\JustTron\JustTron\bin\Debug\JustTron.exe
+D:\Projects\JustGames\JustGames\JustTron\JustTron\bin\Debug\JustTron.pdb
+D:\Projects\JustGames\JustGames\JustTron\JustTron\obj\Debug\JustTron.csprojAssemblyReference.cache
+D:\Projects\JustGames\JustGames\JustTron\JustTron\obj\Debug\JustTron.csproj.CoreCompileInputs.cache
+D:\Projects\JustGames\JustGames\JustTron\JustTron\obj\Debug\JustTron.exe
+D:\Projects\JustGames\JustGames\JustTron\JustTron\obj\Debug\JustTron.pdb

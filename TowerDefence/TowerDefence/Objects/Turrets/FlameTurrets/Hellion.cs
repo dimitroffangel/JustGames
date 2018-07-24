@@ -37,7 +37,7 @@ namespace TowerDefence.Objects.Turrets.FlameTurrets
                     if((this.Target != null && (this.Target.X != enemy.X && this.Target.Y != enemy.Y)) || 
                         this.Target == null)
                     {
-                        if(enemy.TargetedBy.Count == 4)
+                        if(enemy.TargetedBy.Count == Enemy.TargetMaxEnemies)
                             continue;
 
                         minIndex = index;

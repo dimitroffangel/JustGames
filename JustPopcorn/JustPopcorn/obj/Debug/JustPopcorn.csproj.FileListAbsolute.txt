@@ -11,3 +11,10 @@ F:\Projects\Games\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\obj\Debug\JustPo
 F:\Projects\Games\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.csproj.CoreCompileInputs.cache
 F:\Projects\Games\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.exe
 F:\Projects\Games\JustGames\JustPopcorn\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.pdb
+D:\Projects\JustGames\JustGames\JustPopcorn\JustPopcorn\bin\Debug\JustPopcorn.exe.config
+D:\Projects\JustGames\JustGames\JustPopcorn\JustPopcorn\bin\Debug\JustPopcorn.exe
+D:\Projects\JustGames\JustGames\JustPopcorn\JustPopcorn\bin\Debug\JustPopcorn.pdb
+D:\Projects\JustGames\JustGames\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.csprojAssemblyReference.cache
+D:\Projects\JustGames\JustGames\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.csproj.CoreCompileInputs.cache
+D:\Projects\JustGames\JustGames\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.exe
+D:\Projects\JustGames\JustGames\JustPopcorn\JustPopcorn\obj\Debug\JustPopcorn.pdb
