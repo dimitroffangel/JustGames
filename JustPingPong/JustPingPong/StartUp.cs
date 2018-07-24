@@ -74,12 +74,27 @@ namespace JustPingPong
 
         static void MoveSecondPlayerUp()
         {
+            if(currentMode == "PVP")
+            {
+                if (secondPlayerPosition > 0)
+                    secondPlayerPosition--;
+
+                return;
+            }
+
             if (secondPlayerPosition > 0)
                 secondPlayerPosition--;
         }
 
         static void MoveSecondPlayerDown()
         {
+            if (currentMode == "PVP")
+            {
+                if (secondPlayerPosition < Console.WindowHeight - secondPlayerPosition)
+                    secondPlayerPosition++;
+
+                return;
+            }
 
             if (secondPlayerPosition < Console.WindowHeight - secondPlayerPosition)
                 secondPlayerPosition++;
