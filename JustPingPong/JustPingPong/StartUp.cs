@@ -16,6 +16,7 @@ namespace JustPingPong
         static bool ballDirectionRight = true;
         static int firstPlayerResult = 0;
         static int secondPlayerResult = 0;
+        static string currentMode = "void";
         static Random randomGenerator = new Random();
 
         static void RemoveScroll()
@@ -79,6 +80,7 @@ namespace JustPingPong
 
         static void MoveSecondPlayerDown()
         {
+
             if (secondPlayerPosition < Console.WindowHeight - secondPlayerPosition)
                 secondPlayerPosition++;
         }
@@ -156,8 +158,8 @@ namespace JustPingPong
         {
             List<string> options = new List<string>()
             {
-                "Player vs AI",
-                "Player vs Player"
+                "1) Player vs AI",
+                "2) Player vs Player"
             };
 
             int heightAddition = -1;
@@ -174,13 +176,35 @@ namespace JustPingPong
             {
                 Console.SetCursorPosition(0, 0);
                 Console.Write("Please enter a number");
+                LoadMainMenu();
             }
+
+            currentMode = options[input-1];
+
+            if (input == 1)
+                LoadPVE();
+
+            if (input == 2)
+                LoadPVP();
+
+
+            LoadMainMenu();
         }
 
-        static void Main()
+        static void GameFunctions()
         {
-            RemoveScroll();
+            MoveBall();
 
+            DrawFirstPlayer();
+            DrawSecondPlayer();
+            DrawBall();
+            PrintResult();
+
+            Thread.Sleep(40);
+        }
+
+        static void LoadPVE()
+        {
             while (true)
             {
                 Console.Clear();
@@ -192,19 +216,41 @@ namespace JustPingPong
                     if (userInput.Key == ConsoleKey.UpArrow)
                         MoveFirstPlayerUp();
 
-                    if (userInput.Key == ConsoleKey.DownArrow)
+                    else if (userInput.Key == ConsoleKey.DownArrow)
                         MoveFirstPlayerDown();
                 }
                 MoveSecondPlayerAI();
-                MoveBall();
-
-                DrawFirstPlayer();
-                DrawSecondPlayer();
-                DrawBall();
-                PrintResult();
-
-                Thread.Sleep(40);
+                GameFunctions();
             }
+        }
+
+        static void LoadPVP()
+        {
+            while(true)
+            {
+                Console.Clear();
+
+                if(Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo userInput = Console.ReadKey();
+
+                    if (userInput.Key == ConsoleKey.UpArrow)
+                        MoveFirstPlayerUp();
+                    else if (userInput.Key == ConsoleKey.DownArrow)
+                        MoveFirstPlayerDown();
+                    else if (userInput.Key == ConsoleKey.W)
+                        MoveSecondPlayerUp();
+                    else if (userInput.Key == ConsoleKey.S)
+                        MoveSecondPlayerDown();
+                }
+                GameFunctions();
+            }
+        }
+
+        static void Main()
+        {
+            RemoveScroll();
+            LoadMainMenu();
         }
     }
 }
