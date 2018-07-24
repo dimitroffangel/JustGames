@@ -6,8 +6,8 @@ namespace JustPingPong
 {
     class StartUp
     {
-        const int firstPlayerPadSize = 4;
-        const int secondPlayerPadSize = 12;
+        static int firstPlayerPadSize = 4;
+        static int secondPlayerPadSize = 12;
         static int firstPlayerPosition = Console.WindowHeight/ 2 - firstPlayerPadSize / 2;
         static int secondPlayerPosition = Console.WindowHeight / 2- secondPlayerPadSize / 2;
         static int ballPositionX = Console.WindowWidth / 2;
@@ -245,7 +245,28 @@ namespace JustPingPong
 
         static void LoadPVP()
         {
-            while(true)
+            int input = 0;
+
+            Console.WriteLine("How Long do you want to be your pad size player 1 ?: ");
+            while(!int.TryParse(Console.ReadLine(), out input) ||
+                input <= 0 || input > (double)(Console.WindowHeight * 0.6))
+            {
+                Console.WriteLine("Please enter a number between 0 and {0}", Console.WindowHeight / 2 + 1);
+            }
+
+            firstPlayerPadSize = input;
+            input = 0;
+
+            Console.WriteLine("How Long do you want to be your pad size player 2 ?: ");
+            while (!int.TryParse(Console.ReadLine(), out input) ||
+                input <= 0 || input > (double)(Console.WindowHeight * 0.6))
+            {
+                Console.WriteLine("Please enter a number between 0 and {0}", Console.WindowHeight / 2 + 1);
+            }
+
+            secondPlayerPadSize = input;
+
+            while (true)
             {
                 Console.Clear();
 
