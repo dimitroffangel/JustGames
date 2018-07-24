@@ -17,6 +17,9 @@ namespace JustPingPong
         static int firstPlayerResult = 0;
         static int secondPlayerResult = 0;
         static string currentMode = "void";
+
+        static int UI_button_width = Console.WindowWidth / 2 - 10;
+        static int UI_button_height = Console.WindowHeight / 2;
         static Random randomGenerator = new Random();
 
         static void RemoveScroll()
@@ -181,7 +184,8 @@ namespace JustPingPong
 
             foreach (string option in options)
             {
-                Console.SetCursorPosition(Console.WindowWidth / 2 - 10, Console.WindowHeight / 2 + ++heightAddition);
+                Console.SetCursorPosition(UI_button_width, 
+                    UI_button_height + ++heightAddition);
                 Console.WriteLine(option);
             }
 
