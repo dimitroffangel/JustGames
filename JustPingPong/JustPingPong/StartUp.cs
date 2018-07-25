@@ -102,7 +102,7 @@ namespace JustPingPong
                 return;
             }
 
-            if (secondPlayerPosition < Console.WindowHeight - secondPlayerPosition)
+            if (secondPlayerPosition < Console.WindowHeight - secondPlayerPadSize)
                 secondPlayerPosition++;
         }
 
