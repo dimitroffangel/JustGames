@@ -210,6 +210,8 @@ namespace JustPingPong
 
             else if (input == 2)
                 LoadPVP();
+            else if (input == 3)
+                Environment.Exit(0);
 
             LoadMainMenu();
         }
