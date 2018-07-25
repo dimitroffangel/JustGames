@@ -12,6 +12,8 @@ namespace JustPingPong
         static int secondPlayerPosition = Console.WindowHeight / 2- secondPlayerPadSize / 2;
         static int ballPositionX = Console.WindowWidth / 2;
         static int ballPositionY = Console.WindowHeight / 2;
+        static int printResult_Width = Console.WindowWidth / 2;
+        static int printResult_Height = 0;
         static bool ballDirectionUp = true;
         static bool ballDirectionRight = true;
         static int firstPlayerResult = 0;
@@ -30,7 +32,7 @@ namespace JustPingPong
 
         static void PrintResult()
         {
-            Console.SetCursorPosition(Console.WindowWidth / 2, 0);
+            Console.SetCursorPosition(printResult_Width, printResult_Height);
             Console.Write("{0} - {1}", firstPlayerResult, secondPlayerResult);
         }
 
@@ -149,7 +151,8 @@ namespace JustPingPong
 
             if (ballPositionX < 3)
             {
-                if (ballPositionY >= firstPlayerPosition && ballPositionY < firstPlayerPosition + firstPlayerPadSize)
+                if (ballPositionY >= firstPlayerPosition && ballPositionY < 
+                    firstPlayerPosition + firstPlayerPadSize)
                 {
                     ballDirectionRight = true;
                 }
@@ -157,7 +160,8 @@ namespace JustPingPong
 
             if (ballPositionX > Console.WindowWidth - 3)
             {
-                if (ballPositionY >= secondPlayerPosition && ballPositionY < secondPlayerPosition + secondPlayerPadSize)
+                if (ballPositionY >= secondPlayerPosition && ballPositionY < 
+                    secondPlayerPosition + secondPlayerPadSize)
                     ballDirectionRight = false;
             }
 
@@ -250,9 +254,8 @@ namespace JustPingPong
             Console.WriteLine("How Long do you want to be your pad size player 1 ?: ");
             while(!int.TryParse(Console.ReadLine(), out input) ||
                 input <= 0 || input > (double)(Console.WindowHeight * 0.6))
-            {
-                Console.WriteLine("Please enter a number between 0 and {0}", Console.WindowHeight / 2 + 1);
-            }
+                Console.WriteLine("Please enter a number between 0 and {0}", 
+                    Console.WindowHeight / 2 + 1);
 
             firstPlayerPadSize = input;
             input = 0;
@@ -260,9 +263,8 @@ namespace JustPingPong
             Console.WriteLine("How Long do you want to be your pad size player 2 ?: ");
             while (!int.TryParse(Console.ReadLine(), out input) ||
                 input <= 0 || input > (double)(Console.WindowHeight * 0.6))
-            {
-                Console.WriteLine("Please enter a number between 0 and {0}", Console.WindowHeight / 2 + 1);
-            }
+                Console.WriteLine("Please enter a number between 0 and {0}", 
+                    Console.WindowHeight / 2 + 1);
 
             secondPlayerPadSize = input;
 
