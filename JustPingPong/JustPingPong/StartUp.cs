@@ -24,13 +24,14 @@ namespace JustPingPong
         static int UI_button_height = Console.WindowHeight / 2;
         static Random randomGenerator = new Random();
 
-        static void RemoveScroll()
+        static void RemoveScroll() // pre-game operations
         {
+            Console.CursorVisible = false;
             Console.BufferHeight = Console.WindowHeight;
             Console.BufferWidth = Console.WindowWidth;
         }
 
-        static void PrintResult()
+        static void PrintResult() // main function for drawing
         {
             Console.SetCursorPosition(printResult_Width, printResult_Height);
             Console.Write("{0} - {1}", firstPlayerResult, secondPlayerResult);
@@ -55,8 +56,8 @@ namespace JustPingPong
         {
             for (int y = secondPlayerPosition; y < secondPlayerPosition + secondPlayerPadSize; y++)
             {
-                PrintAtPosition(Console.WindowWidth - 1, y, '|');
-                PrintAtPosition(Console.WindowWidth - 2, y, '|');
+                PrintAtPosition(Console.WindowWidth-2, y, '|');
+                PrintAtPosition(Console.WindowWidth-3, y, '|');
             }
         }
 
@@ -79,7 +80,7 @@ namespace JustPingPong
 
         static void MoveSecondPlayerUp()
         {
-            if(currentMode == "PVP")
+            if(currentMode == "2) Player vs Player")
             {
                 if (secondPlayerPosition > 0)
                     secondPlayerPosition--;
@@ -93,9 +94,9 @@ namespace JustPingPong
 
         static void MoveSecondPlayerDown()
         {
-            if (currentMode == "PVP")
+            if (currentMode == "2) Player vs Player")
             {
-                if (secondPlayerPosition < Console.WindowHeight - secondPlayerPosition)
+                if (secondPlayerPosition < Console.WindowHeight - secondPlayerPadSize)
                     secondPlayerPosition++;
 
                 return;
@@ -118,14 +119,13 @@ namespace JustPingPong
 
         static void MoveBall()
         {
-                
             if (ballPositionY == 0)
-                ballDirectionUp = false;
+                ballDirectionUp = false; // change the direction of the ball
 
-            if (ballPositionY == Console.WindowHeight - 1)
+            if (ballPositionY == Console.WindowHeight - 1) // set the coure to go up 
                 ballDirectionUp = true;
 
-            if (ballPositionX == 0)
+            if (ballPositionX == 0) // has passed the defence of player 1
             {
                 ballPositionX = Console.WindowWidth / 2;
                 ballPositionY = Console.WindowHeight / 2;
@@ -137,7 +137,7 @@ namespace JustPingPong
                 Console.ReadKey();
             }
 
-            if (ballPositionX == Console.WindowWidth - 1)
+            if (ballPositionX == Console.WindowWidth - 1) // has passed the defence of player 2 / AI
             {
                 ballPositionX = Console.WindowWidth / 2;
                 ballPositionY = Console.WindowHeight / 2;
@@ -149,19 +149,19 @@ namespace JustPingPong
                 Console.ReadKey();
             }
 
-            if (ballPositionX < 3)
-            {
-                if (ballPositionY >= firstPlayerPosition && ballPositionY < 
+            if (ballPositionX == 2) // if it is colliding with player 1
+            { 
+                if (ballPositionY >=  firstPlayerPosition && ballPositionY <= 
                     firstPlayerPosition + firstPlayerPadSize)
                 {
                     ballDirectionRight = true;
                 }
             }
 
-            if (ballPositionX > Console.WindowWidth - 3)
+            if (ballPositionX > Console.WindowWidth - 4) // if it is colliding with the player 2/ AI
             {
-                if (ballPositionY >= secondPlayerPosition && ballPositionY < 
-                    secondPlayerPosition + secondPlayerPadSize)
+                if (ballPositionY >= secondPlayerPosition && 
+                    ballPositionY < secondPlayerPosition + secondPlayerPadSize)
                     ballDirectionRight = false;
             }
 
@@ -181,7 +181,8 @@ namespace JustPingPong
             List<string> options = new List<string>()
             {
                 "1) Player vs AI",
-                "2) Player vs Player"
+                "2) Player vs Player",
+                "3) Exit"
             };
 
             int heightAddition = -1;
@@ -207,9 +208,8 @@ namespace JustPingPong
             if (input == 1)
                 LoadPVE();
 
-            if (input == 2)
+            else if (input == 2)
                 LoadPVP();
-
 
             LoadMainMenu();
         }
@@ -249,6 +249,8 @@ namespace JustPingPong
 
         static void LoadPVP()
         {
+            // setting players padding length
+            #region
             int input = 0;
 
             Console.WriteLine("How Long do you want to be your pad size player 1 ?: ");
@@ -258,6 +260,7 @@ namespace JustPingPong
                     Console.WindowHeight / 2 + 1);
 
             firstPlayerPadSize = input;
+            firstPlayerPosition = Console.WindowHeight / 2 - firstPlayerPadSize / 2;
             input = 0;
 
             Console.WriteLine("How Long do you want to be your pad size player 2 ?: ");
@@ -267,7 +270,8 @@ namespace JustPingPong
                     Console.WindowHeight / 2 + 1);
 
             secondPlayerPadSize = input;
-
+            secondPlayerPosition = Console.WindowHeight / 2 - secondPlayerPadSize / 2;
+            #endregion
             while (true)
             {
                 Console.Clear();
