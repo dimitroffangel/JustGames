@@ -88,7 +88,7 @@ namespace JustPingPong
                 return;
             }
 
-            if (secondPlayerPosition > 0)
+            if (secondPlayerPosition > 0) // PVP
                 secondPlayerPosition--;
         }
 
@@ -102,7 +102,7 @@ namespace JustPingPong
                 return;
             }
 
-            if (secondPlayerPosition < Console.WindowHeight - secondPlayerPadSize)
+            if (secondPlayerPosition < Console.WindowHeight - secondPlayerPadSize) // PVP
                 secondPlayerPosition++;
         }
 
@@ -125,7 +125,7 @@ namespace JustPingPong
             if (ballPositionY == Console.WindowHeight - 1) // set the coure to go up 
                 ballDirectionUp = true;
 
-            if (ballPositionX == 0) // has passed the defence of player 1
+            if (ballPositionX == 0) // has surpassed the defence of player 1
             {
                 ballPositionX = Console.WindowWidth / 2;
                 ballPositionY = Console.WindowHeight / 2;
@@ -137,7 +137,7 @@ namespace JustPingPong
                 Console.ReadKey();
             }
 
-            if (ballPositionX == Console.WindowWidth - 1) // has passed the defence of player 2 / AI
+            if (ballPositionX == Console.WindowWidth - 1) // has surpassed the defence of player 2 / AI
             {
                 ballPositionX = Console.WindowWidth / 2;
                 ballPositionY = Console.WindowHeight / 2;
@@ -207,7 +207,6 @@ namespace JustPingPong
 
             if (input == 1)
                 LoadPVE();
-
             else if (input == 2)
                 LoadPVP();
             else if (input == 3)
