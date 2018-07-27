@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace JustPopcorn
 {
@@ -11,21 +8,21 @@ namespace JustPopcorn
     {
         class Position
         {
-            public int row;
-            public int col;
-            public char symbol;
+            public int X;
+            public int Y;
+            public char Symbol;
 
             public Position(int row, int col, char symbol)
             {
-                this.row = row;
-                this.col = col;
-                this.symbol = symbol;
+                this.X = row;
+                this.Y = col;
+                this.Symbol = symbol;
             }
 
             public Position(int row, int col)
             {
-                this.row = row;
-                this.col = col;
+                this.X = row;
+                this.Y = col;
             }
         }
 
@@ -129,7 +126,7 @@ namespace JustPopcorn
                 Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
                                                   RandomGenerator.Next(5, Console.WindowHeight - 15), '<');
                 SpecialItemsPositions.Add(placement);
-                DrawFigure(placement.row, placement.col, '<');
+                DrawFigure(placement.X, placement.Y, '<');
             }
         }
         static void DrawIncrease()
@@ -141,7 +138,7 @@ namespace JustPopcorn
                 Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
                                                   RandomGenerator.Next(5, Console.WindowHeight - 15), '>');
                 SpecialItemsPositions.Add(placement);
-                DrawFigure(placement.row, placement.col, '>');
+                DrawFigure(placement.X, placement.Y, '>');
             }
         }
         static void DrawWidenItem()
@@ -153,7 +150,7 @@ namespace JustPopcorn
                 Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
                                                   RandomGenerator.Next(5, Console.WindowHeight - 15), '#');
                 SpecialItemsPositions.Add(placement);
-                DrawFigure(placement.row, placement.col, '#');
+                DrawFigure(placement.X, placement.Y, '#');
             }
         }
         static void DrawScoreMultiplier()
@@ -165,7 +162,7 @@ namespace JustPopcorn
                 Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
                                                   RandomGenerator.Next(5, Console.WindowHeight - 15), '*');
                 SpecialItemsPositions.Add(placement);
-                DrawFigure(placement.row, placement.col, '*');
+                DrawFigure(placement.X, placement.Y, '*');
             }
         }
         static void DrawShield()
@@ -177,7 +174,7 @@ namespace JustPopcorn
                 Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
                                                   RandomGenerator.Next(5, Console.WindowHeight - 15), (char)(128));
                 SpecialItemsPositions.Add(placement);
-                DrawFigure(placement.row, placement.col, (char)128);
+                DrawFigure(placement.X, placement.Y, (char)128);
             }
         }
         static void DrawWeapon()
@@ -189,7 +186,7 @@ namespace JustPopcorn
                 Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
                                                   RandomGenerator.Next(5, Console.WindowHeight - 15), (char)158);
                 SpecialItemsPositions.Add(placement);
-                DrawFigure(placement.row, placement.col, (char)158);
+                DrawFigure(placement.X, placement.Y, (char)158);
             }
         }
 #endregion
@@ -325,7 +322,6 @@ namespace JustPopcorn
                     Score += 25;
                 }
             }
-
         }
         static void CheckCharacter(Position suspect)
         {
@@ -333,21 +329,21 @@ namespace JustPopcorn
             {
                 Position item = SpecialItemsPositions[i];
 
-                if (item.row == suspect.row && item.col == suspect.col)
+                if (item.X == suspect.X && item.Y == suspect.Y)
                 {
-                    if (item.symbol == '>')
+                    if (item.Symbol == '>')
                         Speed = Speed / 2.5;
 
-                    else if (item.symbol == '<')
+                    else if (item.Symbol == '<')
                         Speed = Speed * 1.5;
 
-                    else if (item.symbol == '#')
+                    else if (item.Symbol == '#')
                         PlayerPadding *= 3;
 
-                    else if (item.symbol == '*')
+                    else if (item.Symbol == '*')
                         Score = (int)(Score * 1.5);
 
-                    else if (item.symbol == (char)128)
+                    else if (item.Symbol == (char)128)
                     {
                         HasShield = true;
                         playerY = Console.WindowHeight - 2;
@@ -356,7 +352,7 @@ namespace JustPopcorn
                         ShieldDuration = 45;
                     }
 
-                    else if (item.symbol == (char)158)
+                    else if (item.Symbol == (char)158)
                     {
                         BulletsAmmo = 3;
                     }
@@ -369,6 +365,9 @@ namespace JustPopcorn
 
         static void MoveBullet()
          {
+            if (BulletsAmmo < 0)
+                return;
+
              if (Console.KeyAvailable && !isFired)
              {
                 ConsoleKeyInfo userInput = Console.ReadKey();
@@ -401,7 +400,26 @@ namespace JustPopcorn
             Console.Write("Bullets: {0}", BulletsAmmo);
         }
 
-        static void Main()
+        static void ShieldLogic()
+        {
+            if (!HasShield)
+                return;
+            
+            ShieldDuration--;
+
+            if (ShieldDuration == 0)
+            {
+                HasShield = false;
+                for (int x = 0; x < Console.WindowWidth - 1; x++)
+                {
+                    DrawFigure(x, playerY + 1, ' ');
+                    DrawFigure(x, playerY, ' ');
+                }
+                playerY = Console.WindowHeight - 1;
+            }
+        }
+
+        static void InitializeGame()
         {
             Console.CursorVisible = false;
             Console.BufferHeight = Console.WindowHeight;
@@ -410,39 +428,33 @@ namespace JustPopcorn
             InitializeVariables();
             DrawBricks();
             DrawSpecialItems();
+        }
+
+        static void GameFunctions()
+        {
+            Thread.Sleep(50);
+
+            ShieldLogic();
+
+            MovePlayer();
+            MoveBall();
+            MoveBullet();
+
+            DrawBall();
+            DrawPlayer();
+
+            WriteScore();
+        }
+
+        static void Main()
+        {
+            InitializeGame();
 
             while (BallsLeft > 0)
-            {
-                Thread.Sleep(50);
+                GameFunctions();
 
-                if (HasShield)
-                {
-                    ShieldDuration--;
 
-                    if (ShieldDuration == 0)
-                    {
-                        HasShield = false;
-                        for (int x = 0; x < Console.WindowWidth - 1; x++)
-                        {
-                            DrawFigure(x, playerY + 1, ' ');
-                            DrawFigure(x, playerY, ' ');
-                        }
-                        playerY = Console.WindowHeight - 1;
-                    }
-                }
-                
-                MovePlayer();
-                MoveBall();
-
-                if (BulletsAmmo > 0)
-                    MoveBullet();
-
-                DrawBall();
-                DrawPlayer();
-
-                WriteScore();
-            }
-
+            // After game...
             if (BallsLeft < 0)
             {
                 Console.SetCursorPosition(10, playerY - 5);
