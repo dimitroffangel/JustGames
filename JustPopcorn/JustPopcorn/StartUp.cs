@@ -223,11 +223,11 @@ namespace JustPopcorn
                     playerX++;
                 }
 
-                if (userInput.Key == ConsoleKey.Spacebar && BulletsAmmo > 0 && !isFired)
+                if (userInput.Key == ConsoleKey.Spacebar && BulletsAmmo > 0)
                 {
-                    isFired = true;
                     BulletsAmmo--;
                     BulletX = playerX;
+                    bullets.Add(new Position(BulletX, BulletY));
                 }
             }
         }
@@ -437,29 +437,30 @@ namespace JustPopcorn
             if (BulletsAmmo < 0)
                 return;
 
-             if (isFired)
+             for(int i = 0; i < bullets.Count; i++)
              {
-                if (Bricks[BulletX, BulletY] != 0)
+                if (Bricks[bullets[i].X, bullets[i].Y] != 0)
                 {
-                    DrawFigure(BallX + 1, BallY - 1, ' ');
-                    Bricks[BallX + 1, BallY - 1] = 0;
+                    DrawFigure(bullets[i].X, bullets[i].Y, ' ');
+                    Bricks[bullets[i].X, bullets[i].Y] = 0;
                     Score += 25;
                 }
 
                 if (ContainsSpecialItem(new Position(BulletX, BulletY)))
                     CheckCharacter(new Position(BulletX, BulletY));
 
-                DrawFigure(BulletX, BulletY, ' ');
-                 BulletY--;
+                 DrawFigure(bullets[i].X, bullets[i].Y, ' ');
+                 bullets[i].Y--;
 
-                 if (BulletY == 0)
+                 if (bullets[i].Y == 0)
                  {
-                     Console.ForegroundColor = ConsoleColor.Black;
-                     BulletY = playerY - 2;
-                     isFired = false;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    bullets.Remove(bullets[i]);
+                    i--;
+                    continue;
                  }
 
-                 DrawFigure(BulletX, BulletY, '|');
+                 DrawFigure(bullets[i].X, bullets[i].Y, '|');
              }
         }
 
