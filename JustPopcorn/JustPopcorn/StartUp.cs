@@ -43,6 +43,8 @@ namespace JustPopcorn
         static bool MoveRight;
         static int BallX;
         static int BallY;
+        static DateTime ballLastMoveDate;
+        const float BallMoveRate = 0.1f;
         static int BulletX;
         static int BulletY;
         static int[,] Bricks;
@@ -80,6 +82,12 @@ namespace JustPopcorn
             ShieldDuration = 45;
             BulletsAmmo = 1;
             isFired = false;
+        }
+
+        static void DrawFigure(int x, int y, char character)
+        {
+            Console.SetCursorPosition(x, y);
+            Console.Write(character);
         }
 
         static void DrawPlayer()
@@ -197,26 +205,21 @@ namespace JustPopcorn
             DrawWeapon();
         }
 
-        static void DrawFigure(int x, int y, char character)
-        {
-            Console.SetCursorPosition(x, y);
-            Console.Write(character);
-        }
-
         static void MovePlayer()
         {
-            while (Console.KeyAvailable)
+            if(Console.KeyAvailable)
             {
                 ConsoleKeyInfo userInput = Console.ReadKey();
                 
                 if (userInput.Key == ConsoleKey.LeftArrow && playerX > 0)
                 {
-                    playerX--;
                     Console.SetCursorPosition(playerX + InitialPlayerPadding, playerY);
                     Console.Write(" ");
+                    playerX--;
                 }
 
-                if (userInput.Key == ConsoleKey.RightArrow && playerX + InitialPlayerPadding < Console.WindowWidth - 2)
+                if (userInput.Key == ConsoleKey.RightArrow && 
+                    playerX + InitialPlayerPadding < Console.WindowWidth - 2)
                 {
                     Console.SetCursorPosition(playerX, playerY);
                     Console.Write(" ");
@@ -227,6 +230,11 @@ namespace JustPopcorn
 
         static void MoveBall()
         {
+            if ((DateTime.Now - ballLastMoveDate).TotalSeconds < BallMoveRate)
+                return;
+
+            ballLastMoveDate = DateTime.Now;
+
             Console.SetCursorPosition(BallX, BallY);
             Console.Write(" ");
 
@@ -294,14 +302,12 @@ namespace JustPopcorn
                 if (SpecialItemsPositions.Contains(leftUp))
                     CheckCharacter(leftUp);
 
-                //if it is a brick
-                //ball watching from down
+                //if it is a brick,
+                //ball is watching from down
                 if (Bricks[BallX + 1, BallY + 1] != 0)
                 {
                     DrawFigure(BallX + 1, BallY + 1, ' ');
                     Bricks[BallX + 1, BallY + 1] = 0;
-               //     MoveUp = false;
-             //       MoveRight = false;
                     Score += 25;
                 }
 
@@ -309,7 +315,6 @@ namespace JustPopcorn
                 {
                     DrawFigure(BallX + 1, BallY + 1, ' ');
                     Bricks[BallX, BallY + 1] = 0;
-                 //   MoveUp = false;
                     Score += 25;
                 }
 
@@ -317,8 +322,6 @@ namespace JustPopcorn
                 {
                     DrawFigure(BallX - 1, BallY + 1, ' ');
                     Bricks[BallX - 1, BallY + 1] = 0;
-                //    MoveUp = false;
-              //      MoveRight = true;
                     Score += 25;
                 }
             }
@@ -326,7 +329,6 @@ namespace JustPopcorn
         }
         static void CheckCharacter(Position suspect)
         {
-            
             for(int i = 0; i < SpecialItemsPositions.Count; i++)
             {
                 Position item = SpecialItemsPositions[i];
@@ -367,7 +369,6 @@ namespace JustPopcorn
 
         static void MoveBullet()
          {
-             Thread.Sleep(100);
              if (Console.KeyAvailable && !isFired)
              {
                 ConsoleKeyInfo userInput = Console.ReadKey();
@@ -412,6 +413,8 @@ namespace JustPopcorn
 
             while (BallsLeft > 0)
             {
+                Thread.Sleep(50);
+
                 if (HasShield)
                 {
                     ShieldDuration--;
@@ -438,7 +441,6 @@ namespace JustPopcorn
                 DrawPlayer();
 
                 WriteScore();
-                Thread.Sleep(60);
             }
 
             if (BallsLeft < 0)
