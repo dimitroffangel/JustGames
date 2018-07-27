@@ -36,8 +36,8 @@ namespace JustPopcorn
         static int playerY;
 
         //Declaring position and direction of the ball
-        static bool MoveUp;
-        static bool MoveRight;
+        static bool IsMovingUp;
+        static bool IsMovingRight;
         static int BallX;
         static int BallY;
         static DateTime ballLastMoveDate;
@@ -49,9 +49,10 @@ namespace JustPopcorn
         static int Score;
         static List<Position> SpecialItemsPositions;
         static Random RandomGenerator = new Random();
-        static double Speed;
+        static float Speed;
         static bool HasShield = false;
         static int ShieldDuration;
+        static List<Position> bullets = new List<Position>();
         static int BulletsAmmo;
         static bool isFired;
 
@@ -64,8 +65,8 @@ namespace JustPopcorn
             BallInitialX = playerX;
             BallInitialY = playerY - 10;
 
-            MoveUp = false;
-            MoveRight = true;
+            IsMovingUp = false;
+            IsMovingRight = true;
             BallX = playerX;
             BallY = playerY - 10;
             BulletX = (PlayerPadding + playerX) / 2;
@@ -75,9 +76,9 @@ namespace JustPopcorn
             BallsLeft = int.MaxValue;
             Score = 0;
             SpecialItemsPositions = new List<Position>();
-            Speed = 80;
+            Speed = 50;
             ShieldDuration = 45;
-            BulletsAmmo = 1;
+            BulletsAmmo = 45;
             isFired = false;
         }
 
@@ -90,7 +91,7 @@ namespace JustPopcorn
         static void DrawPlayer()
         {
             Console.ForegroundColor = ConsoleColor.White;
-            for (int i = playerX; i < playerX + InitialPlayerPadding; i++)
+            for (int i = playerX; i < playerX + PlayerPadding; i++)
             {
                 DrawFigure(i, playerY, '=');
             }
@@ -107,7 +108,6 @@ namespace JustPopcorn
             Console.ForegroundColor = ConsoleColor.Magenta;
             for (int col = 5; col < Console.WindowHeight - 15; col++)
             {
-                
                 for (int row = 5; row < Console.WindowWidth - 5; row++)
                 {
                     Bricks[row, col] = 1;
@@ -222,6 +222,106 @@ namespace JustPopcorn
                     Console.Write(" ");
                     playerX++;
                 }
+
+                if (userInput.Key == ConsoleKey.Spacebar && BulletsAmmo > 0 && !isFired)
+                {
+                    isFired = true;
+                    BulletsAmmo--;
+                    BulletX = playerX;
+                }
+            }
+        }
+
+        static bool ContainsSpecialItem(Position pos)
+        {
+            foreach(var position in SpecialItemsPositions)
+            {
+                if (position.X == pos.X && position.Y == pos.Y)
+                    return true;
+            }
+
+            return false;
+        }
+
+        static void BallTopLogic() // when the ball approaches from top
+        {
+            if (IsMovingUp)
+                return;
+
+            // searching for collision with bricks
+            Position rightUp = new Position(BallX + 1, BallY - 1);
+            Position up = new Position(BallX, BallY - 1);
+            Position leftUp = new Position(BallX - 1, BallY - 1);
+
+            if (ContainsSpecialItem(rightUp))
+                CheckCharacter(rightUp);
+
+            if (ContainsSpecialItem(up))
+                CheckCharacter(up);
+
+            if (ContainsSpecialItem(leftUp))
+                CheckCharacter(leftUp);
+
+            if (Bricks[BallX + 1, BallY - 1] != 0)
+            {
+                DrawFigure(BallX + 1, BallY - 1, ' ');
+                Bricks[BallX + 1, BallY - 1] = 0;
+                Score += 25;
+            }
+
+            if (Bricks[BallX, BallY - 1] != 0)
+            {
+                DrawFigure(BallX, BallY - 1, ' ');
+                Bricks[BallX, BallY - 1] = 0;
+                Score += 25;
+            }
+
+            if (Bricks[BallX - 1, BallY - 1] != 0)
+            {
+                DrawFigure(BallX - 1, BallY - 1, ' ');
+                Bricks[BallX - 1, BallY - 1] = 0;
+                Score += 25;
+            }
+        }
+
+        static void BallBottomLogic() // when the ball approaches from the bot
+        {
+            // searching for collision with bricks
+            if (!IsMovingUp)
+                return;
+
+            Position down = new Position(BallX, BallY + 1);
+            Position downLeft = new Position(BallX - 1, BallY + 1);
+            Position downRight = new Position(BallX + 1, BallY + 1);
+
+            if (ContainsSpecialItem(down))
+                CheckCharacter(down);
+
+            if (ContainsSpecialItem(downRight))
+                CheckCharacter(downRight);
+
+            if (ContainsSpecialItem(downLeft))
+                CheckCharacter(downLeft);
+
+            if (Bricks[BallX + 1, BallY + 1] != 0)
+            {
+                DrawFigure(BallX + 1, BallY + 1, ' ');
+                Bricks[BallX + 1, BallY + 1] = 0;
+                Score += 25;
+            }
+
+            if (Bricks[BallX, BallY + 1] != 0)
+            {
+                DrawFigure(BallX, BallY + 1, ' ');
+                Bricks[BallX, BallY + 1] = 0;
+                Score += 25;
+            }
+
+            if (Bricks[BallX - 1, BallY + 1] != 0)
+            {
+                DrawFigure(BallX - 1, BallY + 1, ' ');
+                Bricks[BallX - 1, BallY + 1] = 0;
+                Score += 25;
             }
         }
 
@@ -235,24 +335,24 @@ namespace JustPopcorn
             Console.SetCursorPosition(BallX, BallY);
             Console.Write(" ");
 
-            if (MoveUp)
+            if (IsMovingUp)
                 BallY--;
             else
                 BallY++;
 
-            if (MoveRight)
+            if (IsMovingRight)
                 BallX++;
             else
                 BallX--;
 
             if (BallX == 0)
-                MoveRight = true;
+                IsMovingRight = true;
 
             if (BallX == Console.WindowWidth - 2)
-                MoveRight = false;
+                IsMovingRight = false;
 
             if (BallY == 0)
-                MoveUp = false;
+                IsMovingUp = false;
 
             if (BallY == Console.WindowHeight - 1 && !HasShield)
             {
@@ -263,14 +363,14 @@ namespace JustPopcorn
             }
 
             else if (BallY == Console.WindowHeight - 2 && HasShield)
-                MoveUp = true;
+                IsMovingUp = true;
 
             if (BallY + 1 == playerY)
             {
                 if (BallX >= playerX - 1 && BallX <= playerX + InitialPlayerPadding)
                 {
                     Random random = new Random();
-                    MoveUp = true;
+                    IsMovingUp = true;
                     int xShift = random.Next(1, 100);
                     if (xShift < 50)
                         BallX += (xShift% 10)%5;
@@ -284,43 +384,12 @@ namespace JustPopcorn
                 }
             }
 
+            DrawBall();
+
             if (BallY <= Console.WindowHeight - 2 && BallX <= Console.WindowWidth - 2 && BallX > 0 && BallY > 0)
             {
-                Position rightUp = new Position(BallX + 1, BallY + 1);
-                Position up = new Position(BallX, BallY + 1);
-                Position leftUp = new Position(BallX - 1, BallY);
-
-                if (SpecialItemsPositions.Contains(rightUp))
-                    CheckCharacter(rightUp);
-
-                if (SpecialItemsPositions.Contains(up))
-                    CheckCharacter(up);
-
-                if (SpecialItemsPositions.Contains(leftUp))
-                    CheckCharacter(leftUp);
-
-                //if it is a brick,
-                //ball is watching from down
-                if (Bricks[BallX + 1, BallY + 1] != 0)
-                {
-                    DrawFigure(BallX + 1, BallY + 1, ' ');
-                    Bricks[BallX + 1, BallY + 1] = 0;
-                    Score += 25;
-                }
-
-                if (Bricks[BallX, BallY + 1] != 0)
-                {
-                    DrawFigure(BallX + 1, BallY + 1, ' ');
-                    Bricks[BallX, BallY + 1] = 0;
-                    Score += 25;
-                }
-
-                if (Bricks[BallX - 1, BallY + 1] != 0)
-                {
-                    DrawFigure(BallX - 1, BallY + 1, ' ');
-                    Bricks[BallX - 1, BallY + 1] = 0;
-                    Score += 25;
-                }
+                BallBottomLogic();
+                BallTopLogic();
             }
         }
         static void CheckCharacter(Position suspect)
@@ -332,10 +401,10 @@ namespace JustPopcorn
                 if (item.X == suspect.X && item.Y == suspect.Y)
                 {
                     if (item.Symbol == '>')
-                        Speed = Speed / 2.5;
+                        Speed = Speed / 2.5f;
 
                     else if (item.Symbol == '<')
-                        Speed = Speed * 1.5;
+                        Speed = Speed * 1.5f;
 
                     else if (item.Symbol == '#')
                         PlayerPadding *= 3;
@@ -345,16 +414,16 @@ namespace JustPopcorn
 
                     else if (item.Symbol == (char)128)
                     {
-                        HasShield = true;
+                         HasShield = true;
                         playerY = Console.WindowHeight - 2;
                         for (int x = 0; x < Console.WindowWidth - 1; x++)
                             DrawFigure(x, playerY + 1, '-');
-                        ShieldDuration = 45;
+                        ShieldDuration = 13335;
                     }
 
                     else if (item.Symbol == (char)158)
                     {
-                        BulletsAmmo = 3;
+                        BulletsAmmo += 3;
                     }
 
                     SpecialItemsPositions.Remove(item);
@@ -368,24 +437,26 @@ namespace JustPopcorn
             if (BulletsAmmo < 0)
                 return;
 
-             if (Console.KeyAvailable && !isFired)
+             if (isFired)
              {
-                ConsoleKeyInfo userInput = Console.ReadKey();
+                if (Bricks[BulletX, BulletY] != 0)
+                {
+                    DrawFigure(BallX + 1, BallY - 1, ' ');
+                    Bricks[BallX + 1, BallY - 1] = 0;
+                    Score += 25;
+                }
 
-                if (userInput.Key == ConsoleKey.Spacebar)
-                    isFired = true;    
-             }
+                if (ContainsSpecialItem(new Position(BulletX, BulletY)))
+                    CheckCharacter(new Position(BulletX, BulletY));
 
-             else if (isFired)
-             {
-                 DrawFigure(BulletX, BulletY, ' ');
+                DrawFigure(BulletX, BulletY, ' ');
                  BulletY--;
 
                  if (BulletY == 0)
                  {
                      Console.ForegroundColor = ConsoleColor.Black;
                      BulletY = playerY - 2;
-                     BulletsAmmo--;
+                     isFired = false;
                  }
 
                  DrawFigure(BulletX, BulletY, '|');
@@ -432,7 +503,7 @@ namespace JustPopcorn
 
         static void GameFunctions()
         {
-            Thread.Sleep(50);
+            Thread.Sleep((int)Speed);
 
             ShieldLogic();
 
@@ -440,7 +511,7 @@ namespace JustPopcorn
             MoveBall();
             MoveBullet();
 
-            DrawBall();
+          //  DrawBall();
             DrawPlayer();
 
             WriteScore();
