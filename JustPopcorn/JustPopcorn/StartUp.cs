@@ -26,6 +26,9 @@ namespace JustPopcorn
             }
         }
 
+        // const values
+        const float BallMoveRate = 0.1f;
+
         //Initializing the player position and padding
         const int InitialPlayerPadding = 10;
         const int InitialShieldDuration = 245;
@@ -38,7 +41,6 @@ namespace JustPopcorn
         static bool IsMovingRight;
         static Position ballPosition;
         static DateTime ballLastMoveDate;
-        const float BallMoveRate = 0.1f;
         static Position InitialBulletPosition;
         static int[,] Bricks;
         static int BallsLeft;
@@ -88,9 +90,7 @@ namespace JustPopcorn
         {
             Console.ForegroundColor = ConsoleColor.White;
             for (int i = playerPosition.X; i < playerPosition.X + PlayerPadding; i++)
-            {
                 DrawFigure(i, playerPosition.Y, '=');
-            }
         }
 
         static void ClearPlayer()
@@ -98,7 +98,6 @@ namespace JustPopcorn
             for (int i = playerPosition.X; i < playerPosition.X + PlayerPadding; i++)
                 DrawFigure(i, playerPosition.Y, ' ');
         }
-
 
         static void DrawBall()
         {
@@ -119,77 +118,17 @@ namespace JustPopcorn
             }
         }
 
-#region SpecialItems
-        static void DrawDecrease()
+        #region SpecialItems
+        static void DrawSpecialItem(char symbol)
         {
             int count = RandomGenerator.Next(1, 3);
 
             for (int i = 0; i < count; i++)
             {
                 Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
-                                                  RandomGenerator.Next(5, Console.WindowHeight - 15), '<');
+                                                  RandomGenerator.Next(5, Console.WindowHeight - 15), symbol);
                 SpecialItemsPositions.Add(placement);
-                DrawFigure(placement, '<');
-            }
-        }
-        static void DrawIncrease()
-        {
-            int count = RandomGenerator.Next(1, 3);
-
-            for (int i = 0; i < count; i++)
-            {
-                Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
-                                                  RandomGenerator.Next(5, Console.WindowHeight - 15), '>');
-                SpecialItemsPositions.Add(placement);
-                DrawFigure(placement, '>');
-            }
-        }
-        static void DrawWidenItem()
-        {
-            int count = RandomGenerator.Next(1, 3);
-
-            for (int i = 0; i < count; i++)
-            {
-                Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
-                                                  RandomGenerator.Next(5, Console.WindowHeight - 15), '#');
-                SpecialItemsPositions.Add(placement);
-                DrawFigure(placement, '#');
-            }
-        }
-        static void DrawScoreMultiplier()
-        {
-            int count = RandomGenerator.Next(1, 3);
-
-            for (int i = 0; i < count; i++)
-            {
-                Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
-                                                  RandomGenerator.Next(5, Console.WindowHeight - 15), '*');
-                SpecialItemsPositions.Add(placement);
-                DrawFigure(placement, '*');
-            }
-        }
-        static void DrawShield()
-        {
-            int count = RandomGenerator.Next(1, 3);
-
-            for (int i = 0; i < count; i++)
-            {
-                Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
-                                                  RandomGenerator.Next(5, Console.WindowHeight - 15), (char)(128));
-                SpecialItemsPositions.Add(placement);
-                DrawFigure(placement, (char)128);
-            }
-        }
-        static void DrawWeapon()
-        {
-            int count = RandomGenerator.Next(1, 3);
-
-            for (int i = 0; i < count; i++)
-            {
-                Position placement = new Position(RandomGenerator.Next(5, Console.WindowWidth - 5),
-                                                  RandomGenerator.Next(5, Console.WindowHeight - 15), (char)158);
-                SpecialItemsPositions.Add(placement);
-                DrawFigure(placement, (char)158);
+                DrawFigure(placement, symbol);
             }
         }
 #endregion
@@ -197,12 +136,12 @@ namespace JustPopcorn
         static void DrawSpecialItems()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            DrawDecrease();
-            DrawIncrease();
-            DrawWidenItem();
-            DrawScoreMultiplier();
-            DrawShield();
-            DrawWeapon();
+            DrawSpecialItem('<'); // decrease item
+            DrawSpecialItem('>'); // increase
+            DrawSpecialItem('#'); // widenItem
+            DrawSpecialItem('*'); // multiplier
+            DrawSpecialItem((char)128); // shield
+            DrawSpecialItem((char)158);   // weapon
         }
 
         static void ReadUserInput()
