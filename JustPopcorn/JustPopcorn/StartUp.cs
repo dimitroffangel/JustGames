@@ -93,6 +93,13 @@ namespace JustPopcorn
             }
         }
 
+        static void ClearPlayer()
+        {
+            for (int i = playerPosition.X; i < playerPosition.X + PlayerPadding; i++)
+                DrawFigure(i, playerPosition.Y, ' ');
+        }
+
+
         static void DrawBall()
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -206,13 +213,13 @@ namespace JustPopcorn
                 
                 if (userInput.Key == ConsoleKey.LeftArrow && playerPosition.X > 0)
                 {
-                    Console.SetCursorPosition(playerPosition.X + InitialPlayerPadding, playerPosition.Y);
+                    Console.SetCursorPosition(playerPosition.X + PlayerPadding, playerPosition.Y);
                     Console.Write(" ");
                     playerPosition.X--;
                 }
 
                 if (userInput.Key == ConsoleKey.RightArrow && 
-                    playerPosition.X + InitialPlayerPadding < Console.WindowWidth - 2)
+                    playerPosition.X + PlayerPadding < Console.WindowWidth - 2)
                 {
                     Console.SetCursorPosition(playerPosition.X, playerPosition.Y);
                     Console.Write(" ");
@@ -353,6 +360,7 @@ namespace JustPopcorn
             {
                 ballPosition.X = InitialBallPosition.X;
                 ballPosition.Y = InitialBallPosition.Y;
+                ClearPlayer();
                 PlayerPadding = InitialPlayerPadding;
                 DrawBall();
             }
@@ -363,7 +371,7 @@ namespace JustPopcorn
             if (ballPosition.Y + 1 == playerPosition.Y)
             {
                 if (ballPosition.X >= playerPosition.X - 1 &&
-                    ballPosition.X <= playerPosition.X + InitialPlayerPadding)
+                    ballPosition.X <= playerPosition.X + PlayerPadding)
                 {
                     Random random = new Random();
                     IsMovingUp = true;
@@ -405,6 +413,12 @@ namespace JustPopcorn
 
                     else if (item.Symbol == '#')
                     {
+                        if (playerPosition.X + (PlayerPadding *3) >= Console.WindowWidth - 2)
+                        {
+                            ClearPlayer();
+                            playerPosition.X = 0;
+                        }
+
                         PlayerPadding *= 3;
                     }
                     else if (item.Symbol == '*')
@@ -442,8 +456,8 @@ namespace JustPopcorn
                     Score += 25;
                 }
 
-                if (ContainsSpecialItem(new Position(InitialBulletPosition.X, InitialBulletPosition.Y)))
-                    CheckCharacter(new Position(InitialBulletPosition.X, InitialBulletPosition.Y));
+                if (ContainsSpecialItem(new Position(bullets[i].X, bullets[i].Y)))
+                    CheckCharacter(new Position(bullets[i].X, bullets[i].Y));
 
                  DrawFigure(bullets[i].X, bullets[i].Y, ' ');
                  bullets[i].Y--;
