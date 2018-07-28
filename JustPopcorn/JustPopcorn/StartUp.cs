@@ -19,10 +19,10 @@ namespace JustPopcorn
                 this.Symbol = symbol;
             }
 
-            public Position(int row, int col)
+            public Position(int x, int y)
             {
-                this.X = row;
-                this.Y = col;
+                this.X = x;
+                this.Y = y;
             }
         }
 
@@ -59,7 +59,7 @@ namespace JustPopcorn
         static void InitializeVariables()
         {
             PlayerPadding = InitialPlayerPadding;
-            PlayerPosition = new Position(Console.WindowWidth / 2 - 10, Console.WindowHeight - 1);
+            PlayerPosition = new Position(Console.WindowWidth / 2 , Console.WindowHeight - 1);
 
             InitialBallPosition = new Position(PlayerPosition.X, PlayerPosition.Y - 10);
 
@@ -112,12 +112,12 @@ namespace JustPopcorn
         static void DrawBricks()
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
-            for (int col = 5; col < Console.WindowHeight - 15; col++)
+            for (int y = 5; y < Console.WindowHeight - 15; y++)
             {
-                for (int row = 5; row < Console.WindowWidth - 5; row++)
+                for (int x = 5; x < Console.WindowWidth - 5; x++)
                 {
-                    Bricks[row, col] = 1;
-                    DrawFigure(row, col, '&');
+                    Bricks[x, y] = 1;
+                    DrawFigure(x, y, '&');
                 }
             }
         }
@@ -205,6 +205,7 @@ namespace JustPopcorn
             {
                 Position item = SpecialItemsPositions[i];
 
+                // if the suspect is a special item...
                 if (item.X == suspect.X && item.Y == suspect.Y)
                 {
                     if (item.Symbol == '>')
@@ -429,7 +430,7 @@ namespace JustPopcorn
 
             for (int i = 0; i < Bullets.Count; i++)
             {
-                if (Bricks[Bullets[i].X, Bullets[i].Y] != 0)
+                if (Bricks[Bullets[i].X, Bullets[i].Y] != 0) // if the bullet hits a brick
                 {
                     DrawFigure(Bullets[i].X, Bullets[i].Y, ' ');
                     Bricks[Bullets[i].X, Bullets[i].Y] = 0;
@@ -442,7 +443,7 @@ namespace JustPopcorn
                 DrawFigure(Bullets[i].X, Bullets[i].Y, ' ');
                 Bullets[i].Y--;
 
-                if (Bullets[i].Y == 0)
+                if (Bullets[i].Y == 0) // remove the bullet
                 {
                     Console.ForegroundColor = ConsoleColor.Black;
                     Bullets.Remove(Bullets[i]);
@@ -450,6 +451,7 @@ namespace JustPopcorn
                     continue;
                 }
 
+                // draw it
                 DrawFigure(Bullets[i].X, Bullets[i].Y, '|');
             }
         }
@@ -481,10 +483,10 @@ namespace JustPopcorn
             ShieldLogic();
 
             ReadUserInput();
+
             MoveBall();
             MoveBullet();
 
-          //  DrawBall();
             DrawPlayer();
 
             WriteScore();
