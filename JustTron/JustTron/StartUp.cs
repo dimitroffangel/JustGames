@@ -8,15 +8,20 @@ namespace JustTron
     {
         struct Position
         {
-            public int row;
-            public int col;
+            public int X;
+            public int Y;
 
-            public Position(int row, int col)
+            public Position(int x, int y)
             {
-                this.row = row;
-                this.col = col;
+                this.X = x;
+                this.Y = y;
             }
         }
+
+        static int UI_button_width = Console.WindowWidth / 2 - 10;
+        static int UI_button_height = Console.WindowHeight / 2;
+        static string CurrentMode = "none";
+
 
         static Position FirstPlayerPosition = new Position(Console.WindowWidth / 2 + 10, Console.WindowHeight / 2);
         static Stack<Position> FirstPlayerRoute = new Stack<Position>();
@@ -56,25 +61,25 @@ namespace JustTron
 
         static void DrawFirstPlayer()
         {
-            Console.SetCursorPosition(FirstPlayerPosition.row, FirstPlayerPosition.col);
+            Console.SetCursorPosition(FirstPlayerPosition.X, FirstPlayerPosition.Y);
 
             for (int i = 10; i >= 0; i--)
             {
                 Console.BackgroundColor = ConsoleColor.Red;
                 Console.Write("*");
-                FirstPlayerRoute.Push(new Position(FirstPlayerPosition.row + i, FirstPlayerPosition.col));
+                FirstPlayerRoute.Push(new Position(FirstPlayerPosition.X + i, FirstPlayerPosition.Y));
             }
         }
 
         static void DrawSecondPlayer()
         {
-            Console.SetCursorPosition(SecondPlayerPosition.row, SecondPlayerPosition.col);
+            Console.SetCursorPosition(SecondPlayerPosition.X, SecondPlayerPosition.Y);
 
             for (int i = 10; i >= 0; i--)
             {
                 Console.BackgroundColor = ConsoleColor.DarkBlue;
                 Console.Write("*");
-                SecondPlayerRoute.Push(new Position(SecondPlayerPosition.row + i, FirstPlayerPosition.col));
+                SecondPlayerRoute.Push(new Position(SecondPlayerPosition.X + i, FirstPlayerPosition.Y));
             }
         }
 
@@ -110,17 +115,17 @@ namespace JustTron
             }
         }
 
-        static bool HasPath(byte way)
+        static bool HasPathSecondPlayer(byte way)
         {
             DirectionSecondPlayer = way;
             Position currentHead = SecondPlayerRoute.Peek();
             Position nextDirection = Directions[DirectionSecondPlayer];
-            Position newHead = new Position(currentHead.row + nextDirection.row, currentHead.col + nextDirection.col);
+            Position newHead = 
+                new Position(currentHead.X + nextDirection.X, currentHead.Y + nextDirection.Y);
 
-            if (SecondPlayerRoute.Contains(newHead) ||
-               FirstPlayerRoute.Contains(newHead) ||
-                newHead.row < 0 || newHead.row >= Console.WindowWidth ||
-                 newHead.col < 0 || newHead.col >= Console.WindowHeight)
+            if (SecondPlayerRoute.Contains(newHead) || FirstPlayerRoute.Contains(newHead) ||
+                newHead.X < 0 || newHead.X >= Console.WindowWidth ||
+                 newHead.Y < 0 || newHead.Y >= Console.WindowHeight)
                 return false;
 
             return true;
@@ -128,69 +133,24 @@ namespace JustTron
 
         static void DirectSecondPlayer()
         {
-            //int randomNumber = randomGenerator.Next(0, 50); 
-
-            //if (randomNumber % 2 != 0)
-            //{
-                for (byte way = 0; way < 4; way++)
+            for (byte way = 0; way < 4; way++)
+            {
+                if (HasPathSecondPlayer(way))
                 {
-                    if (HasPath(way))
-                    {
-                        return; // has found a path
-                    }
+                    return; // has found a path
                 }
-                return; // will crash
-            //}
-
-            //else
-            //{
-            //    randomNumber = randomGenerator.Next(0, 50);
-
-            //    if (randomNumber % 2 == 0) // move left or right
-            //    {
-            //        randomNumber = randomGenerator.Next(0, 50);
-
-            //        if (randomNumber % 2 == 0) // move right
-            //        {
-            //            if (directionSecondPlayer != left)
-            //                directionSecondPlayer = right;
-            //        }
-
-            //        else //move left
-            //        {
-            //            if (directionSecondPlayer != right)
-            //                directionSecondPlayer = left;
-            //        }
-            //    }
-
-            //    else //move up or down
-            //    {
-            //        randomNumber = randomGenerator.Next(0, 50);
-
-            //        if (randomNumber % 2 == 0) // move up
-            //        {
-            //            if (directionSecondPlayer != down)
-            //                directionSecondPlayer = up;
-            //        }
-
-            //        else // move down
-            //        {
-            //            if (directionSecondPlayer != up)
-            //                directionSecondPlayer = down;
-            //        }
-            //    }
-            //}
-
+            }
+            return; // will crash
         }
 
         static bool FirstPlayerMoves()
         {
             Position currentHead = FirstPlayerRoute.Peek();
             Position nextDirection = Directions[DirectionFirstPlayer];
-            Position newHead = new Position(currentHead.row + nextDirection.row, currentHead.col + nextDirection.col);
+            Position newHead = new Position(currentHead.X + nextDirection.X, currentHead.Y + nextDirection.Y);
 
-            if (newHead.row < 0 || newHead.row >= Console.WindowWidth ||
-               newHead.col < 0 || newHead.col >= Console.WindowHeight ||
+            if (newHead.X < 0 || newHead.X >= Console.WindowWidth ||
+               newHead.Y < 0 || newHead.Y >= Console.WindowHeight ||
                FirstPlayerRoute.Contains(newHead) ||
                SecondPlayerRoute.Contains(newHead))
             {
@@ -201,7 +161,7 @@ namespace JustTron
                 return false;
             }
 
-            Console.SetCursorPosition(newHead.row, newHead.col);
+            Console.SetCursorPosition(newHead.X, newHead.Y);
             Console.BackgroundColor = ConsoleColor.Red;
             Console.Write("*");
             FirstPlayerRoute.Push(newHead);
@@ -212,10 +172,10 @@ namespace JustTron
         {
             Position currentHead = SecondPlayerRoute.Peek();
             Position nextDirection = Directions[DirectionSecondPlayer];
-            Position newHead = new Position(currentHead.row + nextDirection.row, currentHead.col + nextDirection.col);
+            Position newHead = new Position(currentHead.X + nextDirection.X, currentHead.Y + nextDirection.Y);
 
-            if(newHead.row < 0 || newHead.row >= Console.WindowWidth||
-               newHead.col < 0 || newHead.col >= Console.WindowHeight||
+            if(newHead.X < 0 || newHead.X >= Console.WindowWidth||
+               newHead.Y < 0 || newHead.Y >= Console.WindowHeight||
                 SecondPlayerRoute.Contains(newHead) ||
                 FirstPlayerRoute.Contains(newHead))
             {
@@ -226,7 +186,7 @@ namespace JustTron
                 return false;
             }
 
-            Console.SetCursorPosition(newHead.row, newHead.col);
+            Console.SetCursorPosition(newHead.X, newHead.Y);
             Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.Write("*");
             SecondPlayerRoute.Push(newHead);
@@ -250,7 +210,7 @@ namespace JustTron
                                                 RandomGenerator.Next(0, Console.WindowHeight));
                 } while (FirstPlayerRoute.Contains(DecreaseTimeFigure) || SecondPlayerRoute.Contains(DecreaseTimeFigure));
 
-                Console.SetCursorPosition(DecreaseTimeFigure.row, DecreaseTimeFigure.col);
+                Console.SetCursorPosition(DecreaseTimeFigure.X, DecreaseTimeFigure.Y);
                 Console.Write("%");
             }
 
@@ -262,7 +222,7 @@ namespace JustTron
                                                 RandomGenerator.Next(0, Console.WindowHeight));
                 } while (FirstPlayerRoute.Contains(IncreaseTimeFigure) || SecondPlayerRoute.Contains(IncreaseTimeFigure));
 
-                Console.SetCursorPosition(IncreaseTimeFigure.row, IncreaseTimeFigure.col);
+                Console.SetCursorPosition(IncreaseTimeFigure.X, IncreaseTimeFigure.Y);
                 Console.Write("&");
             }
 
@@ -284,40 +244,123 @@ namespace JustTron
             }
         }
 
-        static void Main(string[] args)
+        static void InitializeGame()
         {
+            Console.Clear();
             Console.BufferWidth = Console.WindowWidth;
             Console.BufferHeight = Console.WindowHeight;
 
             DrawFirstPlayer();
             DrawSecondPlayer();
-            
-            while (true)
+        }
+
+        static void GameFunctions()
+        {
+           DrawScore();
+           DirectFirstPlayer();
+           DirectSecondPlayer();
+
+        
+           TryAddingItems();
+
+           CountSeconds++;
+           Thread.Sleep(Speed);
+        }
+
+        static void LoadMainMenu()
+        {
+            List<string> options = new List<string>()
             {
-              DrawScore();
-              DirectFirstPlayer();
-              DirectSecondPlayer();
+                "1) Player vs AI",
+                "2) Player vs Player",
+                "3) Exit"
+            };
 
-              if (!FirstPlayerMoves() || !SecondPlayerMoves())
-              {
-                  if (FirstPlayerScore == 1)
-                  {
-                      Console.WriteLine("Meh yer' too naive'");
-                      return;
-                  }
+            int heightAddition = -1;
 
-                  if (SecondPlayerScore == 1)
-                  {
-                      Console.WriteLine("Yer' even trying shoulda reconsider yer' existence");
-                      return;
-                  }
-              }
-
-              TryAddingItems();
-
-              CountSeconds++;
-              Thread.Sleep(Speed);
+            foreach (string option in options)
+            {
+                Console.SetCursorPosition(UI_button_width,
+                    UI_button_height + ++heightAddition);
+                Console.WriteLine(option);
             }
+
+            int input = 0;
+
+            while (!int.TryParse(Console.ReadLine(), out input))
+            {
+                Console.SetCursorPosition(0, 0);
+                Console.Write("Please enter a valid number");
+                LoadMainMenu();
+            }
+
+            CurrentMode = options[input - 1];
+
+            if (input == 1)
+                LoadPVE();
+
+            else if (input == 2)
+                LoadPVP();
+
+            else if (input == 3)
+            {
+                Environment.Exit(0);
+            }
+        }
+
+        static void LoadPVE()
+        {
+            InitializeGame();
+
+            while(true)
+            {
+                GameFunctions();
+
+                if (!FirstPlayerMoves() || !SecondPlayerMoves())
+                {
+                    if (FirstPlayerScore == 1)
+                    {
+                        Console.WriteLine("Meh yer' too naive'");
+                        return;
+                    }
+
+                    if (SecondPlayerScore == 1)
+                    {
+                        Console.WriteLine("Yer' even trying ? shoulda reconsider yer' existence");
+                        return;
+                    }
+                }
+            }
+        }
+
+        static void LoadPVP()
+        {
+            InitializeGame();
+
+            while(true)
+            {
+                GameFunctions();
+
+                if (!FirstPlayerMoves() || !SecondPlayerMoves())
+                {
+                    if (FirstPlayerScore == 1)
+                    {
+                        Console.WriteLine("Player 1 wins");
+                        return;
+                    }
+
+                    if (SecondPlayerScore == 1)
+                    {
+                        Console.WriteLine("Player 2 wins");
+                        return;
+                    }
+                }
+            }
+        }
+
+        static void Main()
+        {
+            LoadMainMenu();
         }
     }
 }
