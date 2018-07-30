@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace JustSnake
 {
@@ -22,7 +20,8 @@ namespace JustSnake
         }
 
         static int FoodsEaten = 0;
-        static double TravelSpeed = 100;
+        static float TravelSpeed = 100;
+        static DateTime lastTimeSpawnedObstacle = DateTime.Now;
         static int LastFoodTime = Environment.TickCount;
         static int LastSpecialItem = Environment.TickCount;
         static bool IsFlexible = false;
@@ -78,9 +77,11 @@ namespace JustSnake
         const byte Up = 2;
         const byte Down = 3;
         const int FoodDisappearTime = 8000;
+        const float ObstacleSpawningTime = 8;
         const int SpecialDissapearTime = 8000;
         const float IncreaseSteadilySpeed = 0.1f;
         const float IncreaseSpeed = 0.2f;
+        const float MaxSpeed = 50;
         #endregion
 
         static void DrawFigure(int x, int y, char symbol)
@@ -125,7 +126,8 @@ namespace JustSnake
                 Console.SetCursorPosition(NewSnakeHead.X, NewSnakeHead.Y);
             }
 
-            TravelSpeed -= IncreaseSteadilySpeed;
+            if(TravelSpeed >= MaxSpeed)
+                TravelSpeed -= IncreaseSteadilySpeed;
 
             if (Direction == Left)
                 Console.Write("<");
@@ -173,12 +175,16 @@ namespace JustSnake
         static void TryEvadingCrash()
         {
             if (Obstacles.Contains(NewSnakeHead))
+            {
+                IsFlexible = false;
                 return;
+            }
 
             if (IsFlexible && (NewSnakeHead.X < 0 || NewSnakeHead.Y < 0 ||
                 NewSnakeHead.X >= Console.WindowWidth || NewSnakeHead.Y >= Console.WindowHeight ||
                 SnakeElements.Contains(NewSnakeHead)))
             {
+                IsFlexible = false;
                 // if the snake is flexible and has reached dumped its head somewhere 
                 // remain calm just move on
                 HasUsedFlexibility = true;
@@ -227,6 +233,10 @@ namespace JustSnake
 
                     snakePositions.Insert(0, new Position(snakePositions[1].X, snakePositions[1].Y+1));
                 }
+
+                if (snakePositions[snakePositions.Count-1].X == 0 || snakePositions[snakePositions.Count - 1].X == Console.WindowWidth ||
+                    snakePositions[snakePositions.Count - 1].Y == 0 || snakePositions[snakePositions.Count - 1].Y == Console.WindowHeight)
+                    return;
 
                 foreach (var snakePos in snakePositions)
                     SnakeElements.Enqueue(snakePos);
@@ -290,6 +300,7 @@ namespace JustSnake
                     foreach (var snakePos in snakePositions)
                         SnakeElements.Enqueue(snakePos);
 
+                    TryUpdatingSnakeHead();
                 }
                 else if (SpecialFoodChar == 'T')
                     TravelSpeed += IncreaseSpeed;
@@ -301,7 +312,7 @@ namespace JustSnake
                 } while (SnakeElements.Contains(Food));
 
                 // pick a symbol
-                SpecialFoodChar = SpecialFoodsChars[NextRandomPosition.Next(0, SpecialFoodsChars.Count - 1)];
+                SpecialFoodChar = SpecialFoodsChars[NextRandomPosition.Next(0, SpecialFoodsChars.Count)];
                 DrawFigure(SpecialFood.X, SpecialFood.Y, SpecialFoodChar);
             }
 
@@ -321,18 +332,19 @@ namespace JustSnake
                 Food = new Position(NextRandomPosition.Next(0, Console.WindowWidth),
                                     NextRandomPosition.Next(0, Console.WindowHeight));
 
-            } while (SnakeElements.Contains(Food));
+            } while (SnakeElements.Contains(Food) || IsEqual(SpecialFood, Food) ||
+                     Obstacles.Contains(Food));
 
             DrawFigure(Food.X, Food.Y, '@');
         }
 
         static void AddSpecialFood()
         {
-
             do
             {
                 SpecialFood = new Position(NextRandomPosition.Next(0, Console.WindowWidth), NextRandomPosition.Next(0, Console.WindowHeight));
-            } while (SnakeElements.Contains(SpecialFood));
+            } while (SnakeElements.Contains(SpecialFood) || IsEqual(SpecialFood, Food) || 
+                     Obstacles.Contains(SpecialFood));
 
             // pick a symbol 
             SpecialFoodChar = SpecialFoodsChars[NextRandomPosition.Next(0, SpecialFoodsChars.Count - 1)];
@@ -360,6 +372,24 @@ namespace JustSnake
                 Console.Write("@");
                 LastFoodTime = Environment.TickCount;
             }
+        }
+
+        static void TrySpawningObstacles()
+        {
+            if ((DateTime.Now - lastTimeSpawnedObstacle).TotalSeconds < ObstacleSpawningTime)
+                return;
+
+            lastTimeSpawnedObstacle = DateTime.Now;
+            var obstacle = new Position(NextRandomPosition.Next(0, Console.WindowWidth), 
+                                        NextRandomPosition.Next(0, Console.WindowHeight));
+            do
+            {
+                obstacle = new Position(NextRandomPosition.Next(0, Console.WindowWidth), NextRandomPosition.Next(0, Console.WindowHeight));
+            } while (SnakeElements.Contains(SpecialFood) || Obstacles.Contains(obstacle) ||
+            IsEqual(SpecialFood, obstacle) || IsEqual(Food, obstacle));
+
+            Obstacles.Add(obstacle);
+            DrawFigure(obstacle.X, obstacle.Y, '!');
         }
 
         #endregion
@@ -396,6 +426,14 @@ namespace JustSnake
             }
         }
 
+        static bool IsEqual(Position a, Position b)
+        {
+            if (a.X == b.X && a.Y == b.Y)
+                return true;
+
+            return false;
+        }
+
         static void InitializeGame()
         {
             Console.CursorVisible = false;
@@ -422,10 +460,15 @@ namespace JustSnake
                 if (HasSnakeCrashed())
                     return;
                 TryEvadingCrash();
+
+                if (SnakeElements.Count == 0)
+                    return;
+
                 DrawTail();
                 DrawHead();
                 TryEatingFood();
                 TrySpawningFood();
+                TrySpawningObstacles();
 
                 Thread.Sleep((int)TravelSpeed); 
             }
