@@ -243,6 +243,28 @@ namespace JustSnake
             }
         }
 
+        static void FindDirection()
+        {
+            int currentDirection = Direction;
+            var currentSnakeHead = SnakeElements.Last();
+            var currentNextDirection = Directions[Direction];
+            var paralelNewHead = new Position(currentSnakeHead.X + currentNextDirection.X,
+                                            currentSnakeHead.Y + currentNextDirection.Y);
+
+
+            if (!SnakeElements.Contains(paralelNewHead)) // the position will not change in this case
+                return;
+
+            if (Direction == Right)
+                Direction = Left;
+            else if (Direction == Left)
+                Direction = Right;
+            else if (Direction == Up)
+                Direction = Down;
+            else if (Direction == Down)
+                Direction = Up;
+        }
+
         static void TryEatingFood()
         {
             if (NewSnakeHead.X == Food.X && NewSnakeHead.Y == Food.Y)
@@ -284,22 +306,14 @@ namespace JustSnake
                      * reverse the postion, reverse the queue and translate the list to a queue
                     */
 
-                    var snakePositions = SnakeElements.ToList();
+            var snakePositions = SnakeElements.ToList();
                     SnakeElements.Clear();
                     snakePositions.Reverse();
-
-                    if (Direction == Left)
-                        Direction = Right;
-                    if (Direction == Right)
-                        Direction = Left;
-                    if (Direction == Up)
-                        Direction = Down;
-                    if (Direction == Down)
-                        Direction = Up;
 
                     foreach (var snakePos in snakePositions)
                         SnakeElements.Enqueue(snakePos);
 
+                    FindDirection();
                     TryUpdatingSnakeHead();
                 }
                 else if (SpecialFoodChar == 'T')
@@ -386,7 +400,7 @@ namespace JustSnake
             {
                 obstacle = new Position(NextRandomPosition.Next(0, Console.WindowWidth), NextRandomPosition.Next(0, Console.WindowHeight));
             } while (SnakeElements.Contains(SpecialFood) || Obstacles.Contains(obstacle) ||
-            IsEqual(SpecialFood, obstacle) || IsEqual(Food, obstacle));
+                     IsEqual(SpecialFood, obstacle) || IsEqual(Food, obstacle));
 
             Obstacles.Add(obstacle);
             DrawFigure(obstacle.X, obstacle.Y, '!');
