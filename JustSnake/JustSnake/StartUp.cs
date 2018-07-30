@@ -11,13 +11,13 @@ namespace JustSnake
     {
         struct Position
         {
-           public int row;
-           public int col;
+           public int X;
+           public int Y;
 
-           public Position(int row, int col)
+           public Position(int x, int y)
            {
-               this.row = row;
-               this.col = col;
+               this.X = x;
+               this.Y = y;
            }
         }
 
@@ -26,6 +26,7 @@ namespace JustSnake
         static int LastFoodTime = Environment.TickCount;
         static int LastSpecialItem = Environment.TickCount;
         static bool IsFlexible = false;
+        static bool HasUsedFlexibility = false;
         static Queue<Position> SnakeElements = new Queue<Position>();
         static Position SnakeHead;
         static Position NextDirection;
@@ -78,8 +79,8 @@ namespace JustSnake
         const byte Down = 3;
         const int FoodDisappearTime = 8000;
         const int SpecialDissapearTime = 8000;
-        const float IncreaseSteadySpeed = 0.1f;
-        const float IncreaseSpeed = 0.4f;
+        const float IncreaseSteadilySpeed = 0.1f;
+        const float IncreaseSpeed = 0.2f;
         #endregion
 
         static void DrawFigure(int x, int y, char symbol)
@@ -94,26 +95,37 @@ namespace JustSnake
                 SnakeElements.Enqueue(new Position(i, 0));
 
             foreach (var particle in SnakeElements) // draw the snake
-                DrawFigure(particle.row, particle.col, '*');
+                DrawFigure(particle.X, particle.Y, '*');
 
             TryUpdatingSnakeHead();
         }
 
         static void DrawTail()
         {
-            DrawFigure(SnakeHead.row, SnakeHead.col, '*'); // replace the head with a body
+            if(HasUsedFlexibility) // if the snake has used flexibilty, 
+            // all of its parts must be transfered to the place where the snake is at that moment
+                return;
+
+            DrawFigure(SnakeHead.X, SnakeHead.Y, '*'); // replace the head with a body
         }
 
         static void DrawHead()
         {
-            if (NewSnakeHead.row >= 0 && NewSnakeHead.row < Console.WindowWidth &&
-                NewSnakeHead.col >= 0 && NewSnakeHead.col < Console.WindowHeight)
+            if(HasUsedFlexibility) // if the snake has used flexibilty, 
+                // all of its parts must be transfered to the place where the snake is at that moment
             {
-                SnakeElements.Enqueue(NewSnakeHead); // and set the new head
-                Console.SetCursorPosition(NewSnakeHead.row, NewSnakeHead.col);
+                HasUsedFlexibility = false;
+                return;
             }
 
-            TravelSpeed -= IncreaseSteadySpeed;
+            if (NewSnakeHead.X >= 0 && NewSnakeHead.X < Console.WindowWidth &&
+                NewSnakeHead.Y >= 0 && NewSnakeHead.Y < Console.WindowHeight)
+            {
+                SnakeElements.Enqueue(NewSnakeHead); // and set the new head
+                Console.SetCursorPosition(NewSnakeHead.X, NewSnakeHead.Y);
+            }
+
+            TravelSpeed -= IncreaseSteadilySpeed;
 
             if (Direction == Left)
                 Console.Write("<");
@@ -129,15 +141,24 @@ namespace JustSnake
         {
             SnakeHead = SnakeElements.Last();
             NextDirection = Directions[Direction];
-            NewSnakeHead = new Position(SnakeHead.row + NextDirection.row,
-                                        SnakeHead.col + NextDirection.col);
+            NewSnakeHead = new Position(SnakeHead.X + NextDirection.X,
+                                        SnakeHead.Y + NextDirection.Y);
         }
 
         #region EnviromentCollision
+
+        static bool HasSnakeDied()
+        {
+            if (SnakeElements.Count == 0)
+                return true;
+
+            return false;
+        }
+
         static bool HasSnakeCrashed()
         {
-            if (!IsFlexible && (NewSnakeHead.row < 0 || NewSnakeHead.col < 0 ||
-                  NewSnakeHead.row >= Console.WindowWidth || NewSnakeHead.col >= Console.WindowHeight ||
+            if (!IsFlexible && (NewSnakeHead.X < 0 || NewSnakeHead.Y < 0 ||
+                  NewSnakeHead.X >= Console.WindowWidth || NewSnakeHead.Y >= Console.WindowHeight ||
                   SnakeElements.Contains(NewSnakeHead) || Obstacles.Contains(NewSnakeHead)))
             {
                 Console.SetCursorPosition(0, 0);
@@ -151,65 +172,60 @@ namespace JustSnake
 
         static void TryEvadingCrash()
         {
-            if (IsFlexible && (NewSnakeHead.row < 0 || NewSnakeHead.col < 0 ||
-                NewSnakeHead.row >= Console.WindowWidth || NewSnakeHead.col >= Console.WindowHeight ||
-                SnakeElements.Contains(NewSnakeHead) || Obstacles.Contains(NewSnakeHead)))
+            if (Obstacles.Contains(NewSnakeHead))
+                return;
+
+            if (IsFlexible && (NewSnakeHead.X < 0 || NewSnakeHead.Y < 0 ||
+                NewSnakeHead.X >= Console.WindowWidth || NewSnakeHead.Y >= Console.WindowHeight ||
+                SnakeElements.Contains(NewSnakeHead)))
             {
                 // if the snake is flexible and has reached dumped its head somewhere 
                 // remain calm just move on
+                HasUsedFlexibility = true;
 
                 // clear the current snake parts from the console
                 foreach (var snakeElement in SnakeElements)
                 {
-                    Console.SetCursorPosition(snakeElement.row, snakeElement.col);
-                    Console.Write("    ");
+                    Console.SetCursorPosition(snakeElement.X, snakeElement.Y);
+                    Console.Write(" ");
                 }
 
                 // convert to list change the position and invert back to queue
                 List<Position> snakePositions = SnakeElements.ToList();
+                SnakeElements.Clear();
 
-                if (NewSnakeHead.row < 0)
+                if (NewSnakeHead.X < 0)
                 {
-                    snakePositions.Insert(0, new Position(Console.WindowWidth - 1, snakePositions[1].col));
+                    for (int i = 0; i < snakePositions.Count; i++)
+                        snakePositions[i] = new Position(Console.WindowWidth - i - 1, snakePositions[i].Y);
 
-                    for (int i = 1; i < snakePositions.Count; i++)
-                    {
-                        snakePositions[i] = new Position(Console.WindowWidth - i - 1, snakePositions[i].col);
-                        SnakeElements.Dequeue();
-                    }
+                    snakePositions.Insert(0, new Position(snakePositions[1].X - 1, snakePositions[1].Y));
                 }
 
-                else if (NewSnakeHead.row == Console.WindowWidth)
+                else if (NewSnakeHead.X == Console.WindowWidth)
                 {
-                    snakePositions.Insert(0, new Position(0, snakePositions[1].col));
+                    for (int i = 0; i < snakePositions.Count; i++)
+                        snakePositions[i] = new Position(i, snakePositions[i].Y);
 
-                    for (int i = 1; i < snakePositions.Count; i++)
-                    {
-                        snakePositions[i] = new Position(i, snakePositions[i].col);
-                        SnakeElements.Dequeue();
-                    }
+                    snakePositions.Insert(0, new Position(snakePositions[1].X + 1, snakePositions[1].Y));
                 }
 
-                else if (NewSnakeHead.col < 0)
+                else if (NewSnakeHead.Y < 0)
                 {
-                    snakePositions.Insert(0, new Position(snakePositions[1].row, Console.WindowHeight - 1));
+                    for (int i = 0; i < snakePositions.Count; i++)
+                        snakePositions[i] = new Position(snakePositions[i].X, Console.WindowHeight - i - 1);
 
-                    for (int i = 1; i < snakePositions.Count; i++)
-                    {
-                        snakePositions[i] = new Position(snakePositions[i].row, Console.WindowHeight - i - 1);
-                        SnakeElements.Dequeue();
-                    }
+                    snakePositions.Insert(0, new Position(snakePositions[1].X, snakePositions[1].Y -1));
                 }
 
-                else if (NewSnakeHead.col == Console.WindowHeight)
+                else if (NewSnakeHead.Y == Console.WindowHeight)
                 {
-                    snakePositions.Insert(0, new Position(snakePositions[1].row, 0));
-
-                    for (int i = 1; i < snakePositions.Count; i++)
+                    for (int i = 0; i < snakePositions.Count; i++)
                     {
-                        snakePositions[i] = new Position(snakePositions[i].row, i);
-                        SnakeElements.Dequeue();
+                        snakePositions[i] = new Position(snakePositions[i].X, i);
                     }
+
+                    snakePositions.Insert(0, new Position(snakePositions[1].X, snakePositions[1].Y+1));
                 }
 
                 foreach (var snakePos in snakePositions)
@@ -219,21 +235,20 @@ namespace JustSnake
 
         static void TryEatingFood()
         {
-            if (NewSnakeHead.row == Food.row && NewSnakeHead.col == Food.col)
+            if (NewSnakeHead.X == Food.X && NewSnakeHead.Y == Food.Y)
             {
                 do
                 {
                     Food = new Position(NextRandomPosition.Next(1, Console.WindowWidth - 1),
                                        NextRandomPosition.Next(1, Console.WindowHeight - 1));
                 } while (SnakeElements.Contains(Food));
-                Console.SetCursorPosition(Food.row, Food.col);
-                Console.Write("@");
+                DrawFigure(Food.X, Food.Y, '@');
                 FoodsEaten++;
                 LastFoodTime = Environment.TickCount;
                 TravelSpeed -= IncreaseSpeed;
             }
 
-            else if (NewSnakeHead.row == SpecialFood.row && NewSnakeHead.col == SpecialFood.col)
+            else if (NewSnakeHead.X == SpecialFood.X && NewSnakeHead.Y == SpecialFood.Y)
             {
                 // activate the special food effect
                 // then create a new one
@@ -245,8 +260,7 @@ namespace JustSnake
                     for (int i = 0; i <= oneFourth; i++)
                     {
                         Position tail = SnakeElements.Dequeue();
-                        Console.SetCursorPosition(tail.row, tail.col);
-                        Console.Write(" ");
+                        DrawFigure(tail.X, tail.Y, ' ');
                     }
                 }
 
@@ -288,15 +302,13 @@ namespace JustSnake
 
                 // pick a symbol
                 SpecialFoodChar = SpecialFoodsChars[NextRandomPosition.Next(0, SpecialFoodsChars.Count - 1)];
-                Console.SetCursorPosition(SpecialFood.row, SpecialFood.col);
-                Console.Write(SpecialFoodChar);
+                DrawFigure(SpecialFood.X, SpecialFood.Y, SpecialFoodChar);
             }
 
             else // if it has not eaten something the tail is cut
             {
                 Position tail = SnakeElements.Dequeue();
-                Console.SetCursorPosition(tail.row, tail.col);
-                Console.Write(" ");
+                DrawFigure(tail.X, tail.Y, ' ');
             }
         }
         #endregion
@@ -311,7 +323,7 @@ namespace JustSnake
 
             } while (SnakeElements.Contains(Food));
 
-            DrawFigure(Food.row, Food.col, '@');
+            DrawFigure(Food.X, Food.Y, '@');
         }
 
         static void AddSpecialFood()
@@ -324,32 +336,31 @@ namespace JustSnake
 
             // pick a symbol 
             SpecialFoodChar = SpecialFoodsChars[NextRandomPosition.Next(0, SpecialFoodsChars.Count - 1)];
-            DrawFigure(SpecialFood.row, SpecialFood.col, SpecialFoodChar);
+            DrawFigure(SpecialFood.X, SpecialFood.Y, SpecialFoodChar);
         }
 
         static void AddObstacles()
         {
             foreach (var obstacle in Obstacles)
-                DrawFigure(obstacle.row, obstacle.col, '!');
+                DrawFigure(obstacle.X, obstacle.Y, '!');
         }
 
         static void TrySpawningFood()
         {
             if (Environment.TickCount - LastFoodTime >= FoodDisappearTime)
             {
-                Console.SetCursorPosition(Food.row, Food.col);
+                Console.SetCursorPosition(Food.X, Food.Y);
                 Console.Write(" ");
                 do
                 {
                     Food = new Position(NextRandomPosition.Next(0, Console.WindowWidth),
                                        NextRandomPosition.Next(0, Console.WindowHeight));
                 } while (SnakeElements.Contains(Food));
-                Console.SetCursorPosition(Food.row, Food.col);
+                Console.SetCursorPosition(Food.X, Food.Y);
                 Console.Write("@");
                 LastFoodTime = Environment.TickCount;
             }
         }
-
 
         #endregion
 
@@ -404,6 +415,9 @@ namespace JustSnake
             while (true)
             {
                 ReadInput();
+                if (HasSnakeDied())
+                    return;
+
                 TryUpdatingSnakeHead();
                 if (HasSnakeCrashed())
                     return;
