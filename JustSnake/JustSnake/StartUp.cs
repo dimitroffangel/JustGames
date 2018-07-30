@@ -88,6 +88,7 @@ namespace JustSnake
             Console.Write(symbol);
         }
 
+
         static void CreateSnake()
         {
             for (int i = 0; i < 5; i++) // initialize the snake
@@ -96,75 +97,44 @@ namespace JustSnake
             foreach (var particle in snakeElements) // draw the snake
                 DrawFigure(particle.row, particle.col, '*');
 
+            TryUpdatingSnakeHead();
+        }
+
+        static void DrawTail()
+        {
+            DrawFigure(snakeHead.row, snakeHead.col, '*'); // replace the head with a body
+        }
+
+        static void DrawHead()
+        {
+            if (newSnakeHead.row >= 0 && newSnakeHead.row < Console.WindowWidth &&
+                newSnakeHead.col >= 0 && newSnakeHead.col < Console.WindowHeight)
+            {
+                snakeElements.Enqueue(newSnakeHead); // and set the new head
+                Console.SetCursorPosition(newSnakeHead.row, newSnakeHead.col);
+            }
+
+            TravelSpeed -= increaseSteadySpeed;
+
+            if (direction == left)
+                Console.Write("<");
+            if (direction == right)
+                Console.Write(">");
+            if (direction == up)
+                Console.Write("^");
+            if (direction == down)
+                Console.Write("v");
+        }
+
+        static void TryUpdatingSnakeHead()
+        {
             snakeHead = snakeElements.Last();
             nextDirection = directions[direction];
             newSnakeHead = new Position(snakeHead.row + nextDirection.row,
-                                                         snakeHead.col + nextDirection.col);
+                                        snakeHead.col + nextDirection.col);
         }
 
-        static void AddOrdinaryFood()
-        {
-            do
-            {
-                food = new Position(nextRandomPosition.Next(0, Console.WindowWidth),
-                                    nextRandomPosition.Next(0, Console.WindowHeight));
-
-            } while (snakeElements.Contains(food));
-
-            DrawFigure(food.row, food.col, '@');
-        }
-
-        static void AddSpecialFood()
-        {
-
-            do
-            {
-                specialFood = new Position(nextRandomPosition.Next(0, Console.WindowWidth), nextRandomPosition.Next(0, Console.WindowHeight));
-            } while (snakeElements.Contains(specialFood));
-
-            // pick a symbol 
-            specialFoodChar = specialFoodsChars[nextRandomPosition.Next(0, specialFoodsChars.Count - 1)];
-            DrawFigure(specialFood.row, specialFood.col, specialFoodChar);
-        }
-
-        static void AddObstacles()
-        {
-            foreach (var obstacle in obstacles)
-                DrawFigure(obstacle.row, obstacle.col, '!');
-        }
-
-        static void ReadInput()
-        {
-            if (Console.KeyAvailable)
-            {
-                ConsoleKeyInfo userInput = Console.ReadKey();
-
-                if (userInput.Key == ConsoleKey.RightArrow)
-                {
-                    if (direction != left)
-                        direction = right;
-                }
-
-                else if (userInput.Key == ConsoleKey.LeftArrow)
-                {
-                    if (direction != right)
-                        direction = left;
-                }
-
-                else if (userInput.Key == ConsoleKey.UpArrow)
-                {
-                    if (direction != down)
-                        direction = up;
-                }
-
-                else if (userInput.Key == ConsoleKey.DownArrow)
-                {
-                    if (direction != up)
-                        direction = down;
-                }
-            }
-        }
-
+        #region EnviromentCollision
         static bool HasSnakeCrashed()
         {
             if (!isFlexible && (newSnakeHead.row < 0 || newSnakeHead.col < 0 ||
@@ -246,43 +216,6 @@ namespace JustSnake
                 foreach (var snakePos in snakePositions)
                     snakeElements.Enqueue(snakePos);
             }
-        }
-
-        static void InitializeGame()
-        {
-            Console.CursorVisible = false;
-            Console.BufferHeight = Console.WindowHeight;
-
-            CreateSnake();
-            AddOrdinaryFood();
-            AddSpecialFood();
-            AddObstacles();
-        }
-
-        static void DrawTail()
-        {
-            DrawFigure(snakeHead.row, snakeHead.col, '*'); // replace the head with a body
-        }
-
-        static void DrawHead()
-        {
-            if (newSnakeHead.row >= 0 && newSnakeHead.row < Console.WindowWidth &&
-                newSnakeHead.col >= 0 && newSnakeHead.col < Console.WindowHeight)
-            {
-                snakeElements.Enqueue(newSnakeHead); // and set the new head
-                Console.SetCursorPosition(newSnakeHead.row, newSnakeHead.col);
-            }
-
-            TravelSpeed -= increaseSteadySpeed;
-
-            if (direction == left)
-                Console.Write("<");
-            if (direction == right)
-                Console.Write(">");
-            if (direction == up)
-                Console.Write("^");
-            if (direction == down)
-                Console.Write("v");
         }
 
         static void TryEatingFood()
@@ -367,6 +300,39 @@ namespace JustSnake
                 Console.Write(" ");
             }
         }
+        #endregion
+
+        #region Adding Objects
+        static void AddOrdinaryFood()
+        {
+            do
+            {
+                food = new Position(nextRandomPosition.Next(0, Console.WindowWidth),
+                                    nextRandomPosition.Next(0, Console.WindowHeight));
+
+            } while (snakeElements.Contains(food));
+
+            DrawFigure(food.row, food.col, '@');
+        }
+
+        static void AddSpecialFood()
+        {
+
+            do
+            {
+                specialFood = new Position(nextRandomPosition.Next(0, Console.WindowWidth), nextRandomPosition.Next(0, Console.WindowHeight));
+            } while (snakeElements.Contains(specialFood));
+
+            // pick a symbol 
+            specialFoodChar = specialFoodsChars[nextRandomPosition.Next(0, specialFoodsChars.Count - 1)];
+            DrawFigure(specialFood.row, specialFood.col, specialFoodChar);
+        }
+
+        static void AddObstacles()
+        {
+            foreach (var obstacle in obstacles)
+                DrawFigure(obstacle.row, obstacle.col, '!');
+        }
 
         static void TrySpawningFood()
         {
@@ -385,6 +351,52 @@ namespace JustSnake
             }
         }
 
+
+        #endregion
+
+        static void ReadInput()
+        {
+            if (Console.KeyAvailable)
+            {
+                ConsoleKeyInfo userInput = Console.ReadKey();
+
+                if (userInput.Key == ConsoleKey.RightArrow)
+                {
+                    if (direction != left)
+                        direction = right;
+                }
+
+                else if (userInput.Key == ConsoleKey.LeftArrow)
+                {
+                    if (direction != right)
+                        direction = left;
+                }
+
+                else if (userInput.Key == ConsoleKey.UpArrow)
+                {
+                    if (direction != down)
+                        direction = up;
+                }
+
+                else if (userInput.Key == ConsoleKey.DownArrow)
+                {
+                    if (direction != up)
+                        direction = down;
+                }
+            }
+        }
+
+        static void InitializeGame()
+        {
+            Console.CursorVisible = false;
+            Console.BufferHeight = Console.WindowHeight;
+
+            CreateSnake();
+            AddOrdinaryFood();
+            AddSpecialFood();
+            AddObstacles();
+        }
+        
         static void Main()
         {
             // initialize the game
@@ -393,12 +405,7 @@ namespace JustSnake
             while (true)
             {
                 ReadInput();
-
-                snakeHead = snakeElements.Last();
-                nextDirection = directions[direction];
-                newSnakeHead = new Position(snakeHead.row + nextDirection.row,
-                                                             snakeHead.col + nextDirection.col);
-
+                TryUpdatingSnakeHead();
                 if (HasSnakeCrashed())
                     return;
                 TryEvadingCrash();
