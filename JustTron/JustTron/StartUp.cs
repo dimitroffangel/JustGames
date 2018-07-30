@@ -22,7 +22,6 @@ namespace JustTron
         static int UI_button_height = Console.WindowHeight / 2;
         static string CurrentMode = "none";
 
-
         static Position FirstPlayerPosition = new Position(Console.WindowWidth / 2 + 10, Console.WindowHeight / 2);
         static Stack<Position> FirstPlayerRoute = new Stack<Position>();
 
@@ -41,7 +40,7 @@ namespace JustTron
             };
 
         static int DirectionFirstPlayer = left;
-        static int DirectionSecondPlayer = right;
+        static int DirectionSecondPlayer = left;
 
         static Random RandomGenerator = new Random();
         static int FirstPlayerScore = 0;
@@ -83,7 +82,7 @@ namespace JustTron
             }
         }
 
-        static void DirectFirstPlayer()
+        static void ReadUserInput()
         {
             if (Console.KeyAvailable)
             {
@@ -95,22 +94,49 @@ namespace JustTron
                         DirectionFirstPlayer = right;
                 }
 
-                if (userInput.Key == ConsoleKey.LeftArrow)
+                else if (userInput.Key == ConsoleKey.LeftArrow)
                 {
                     if (DirectionFirstPlayer != right)
                         DirectionFirstPlayer = left;
                 }
 
-                if (userInput.Key == ConsoleKey.UpArrow)
+                else if (userInput.Key == ConsoleKey.UpArrow)
                 {
                     if (DirectionFirstPlayer != down)
                         DirectionFirstPlayer = up;
                 }
 
-                if (userInput.Key == ConsoleKey.DownArrow)
+                else if (userInput.Key == ConsoleKey.DownArrow)
                 {
                     if (DirectionFirstPlayer != up)
                         DirectionFirstPlayer = down;
+                }
+
+                if (CurrentMode != "2) Player vs Player")
+                    return;
+
+                if (userInput.Key == ConsoleKey.D)
+                {
+                    if (DirectionSecondPlayer != left)
+                        DirectionSecondPlayer = right;
+                }
+
+                else if (userInput.Key == ConsoleKey.A)
+                {
+                    if (DirectionSecondPlayer != right)
+                        DirectionSecondPlayer = left;
+                }
+
+                else if (userInput.Key == ConsoleKey.W)
+                {
+                    if (DirectionSecondPlayer != down)
+                        DirectionSecondPlayer = up;
+                }
+
+                else if (userInput.Key == ConsoleKey.S)
+                {
+                    if (DirectionSecondPlayer != up)
+                        DirectionSecondPlayer = down;
                 }
             }
         }
@@ -131,7 +157,7 @@ namespace JustTron
             return true;
         }
 
-        static void DirectSecondPlayer()
+        static void DirectSecondPlayer_PVE()
         {
             for (byte way = 0; way < 4; way++)
             {
@@ -168,7 +194,33 @@ namespace JustTron
             return true;
         }
 
-        static bool SecondPlayerMoves()
+        static bool SecondPlayerMoves_PVP()
+        {
+            Position currentHead = SecondPlayerRoute.Peek();
+            Position nextDirection = Directions[DirectionSecondPlayer];
+            Position newHead = new Position(currentHead.X + nextDirection.X, currentHead.Y + nextDirection.Y);
+
+            if (newHead.X < 0 || newHead.X >= Console.WindowWidth ||
+               newHead.Y < 0 || newHead.Y >= Console.WindowHeight ||
+               FirstPlayerRoute.Contains(newHead) ||
+               SecondPlayerRoute.Contains(newHead))
+            {
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.Clear();
+                Console.WriteLine("First player wins");
+                FirstPlayerScore++;
+                return false;
+            }
+
+            Console.SetCursorPosition(newHead.X, newHead.Y);
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.Write("*");
+            SecondPlayerRoute.Push(newHead);
+
+            return true;
+        }
+
+        static bool SecondPlayerMoves_PVE()
         {
             Position currentHead = SecondPlayerRoute.Peek();
             Position nextDirection = Directions[DirectionSecondPlayer];
@@ -247,6 +299,7 @@ namespace JustTron
         static void InitializeGame()
         {
             Console.Clear();
+            Console.CursorVisible = false;
             Console.BufferWidth = Console.WindowWidth;
             Console.BufferHeight = Console.WindowHeight;
 
@@ -257,10 +310,8 @@ namespace JustTron
         static void GameFunctions()
         {
            DrawScore();
-           DirectFirstPlayer();
-           DirectSecondPlayer();
-
-        
+           ReadUserInput();
+           
            TryAddingItems();
 
            CountSeconds++;
@@ -314,9 +365,10 @@ namespace JustTron
 
             while(true)
             {
+                DirectSecondPlayer_PVE();
                 GameFunctions();
 
-                if (!FirstPlayerMoves() || !SecondPlayerMoves())
+                if (!FirstPlayerMoves() || !SecondPlayerMoves_PVE())
                 {
                     if (FirstPlayerScore == 1)
                     {
@@ -341,7 +393,7 @@ namespace JustTron
             {
                 GameFunctions();
 
-                if (!FirstPlayerMoves() || !SecondPlayerMoves())
+                if (!FirstPlayerMoves() || !SecondPlayerMoves_PVP())
                 {
                     if (FirstPlayerScore == 1)
                     {
