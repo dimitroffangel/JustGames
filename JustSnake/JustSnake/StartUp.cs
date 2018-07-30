@@ -306,7 +306,7 @@ namespace JustSnake
                      * reverse the postion, reverse the queue and translate the list to a queue
                     */
 
-            var snakePositions = SnakeElements.ToList();
+                    var snakePositions = SnakeElements.ToList();
                     SnakeElements.Clear();
                     snakePositions.Reverse();
 
@@ -323,7 +323,8 @@ namespace JustSnake
                 {
                     SpecialFood = new Position(NextRandomPosition.Next(0, Console.WindowWidth - 1),
                                               NextRandomPosition.Next(0, Console.WindowHeight - 1));
-                } while (SnakeElements.Contains(Food));
+                } while (SnakeElements.Contains(Food) || 
+                         IsEqual(SpecialFood, Food) || Obstacles.Contains(SpecialFood));
 
                 // pick a symbol
                 SpecialFoodChar = SpecialFoodsChars[NextRandomPosition.Next(0, SpecialFoodsChars.Count)];
@@ -381,7 +382,9 @@ namespace JustSnake
                 {
                     Food = new Position(NextRandomPosition.Next(0, Console.WindowWidth),
                                        NextRandomPosition.Next(0, Console.WindowHeight));
-                } while (SnakeElements.Contains(Food));
+                } while (SnakeElements.Contains(Food) || 
+                         Obstacles.Contains(Food) || IsEqual(Food, SpecialFood));
+
                 Console.SetCursorPosition(Food.X, Food.Y);
                 Console.Write("@");
                 LastFoodTime = Environment.TickCount;
@@ -399,7 +402,7 @@ namespace JustSnake
             do
             {
                 obstacle = new Position(NextRandomPosition.Next(0, Console.WindowWidth), NextRandomPosition.Next(0, Console.WindowHeight));
-            } while (SnakeElements.Contains(SpecialFood) || Obstacles.Contains(obstacle) ||
+            } while (SnakeElements.Contains(obstacle) || Obstacles.Contains(obstacle) ||
                      IsEqual(SpecialFood, obstacle) || IsEqual(Food, obstacle));
 
             Obstacles.Add(obstacle);
